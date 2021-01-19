@@ -1,4 +1,4 @@
-# MissileDefense
+# Missile-Defense
 
 An attempt at building a missile defense system using Unity and NEAT:
 

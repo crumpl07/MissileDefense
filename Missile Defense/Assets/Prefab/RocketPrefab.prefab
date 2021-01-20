@@ -43,6 +43,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemyMissile: {fileID: 7581480949122136240, guid: 5d75cd6029ca24b4585d62041d2875a9,
     type: 3}
+  enemyMissileLocation: {fileID: 7096833456711180810, guid: 5d75cd6029ca24b4585d62041d2875a9,
+    type: 3}
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
   enemyMissileVel: 150
 --- !u!1001 &3003957819783984259

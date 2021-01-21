@@ -5,7 +5,8 @@ An attempt at building a missile defense system using Unity and NEAT:
 Goal of the project is to teach a missile defense system to shoot down incoming missiles using neural evolution of augmented topologies (NEAT).
 
 
-Created some general terrain, added planes and a missile spawn. The planes were added to test if the NEAT algorithm could discern between incoming rockets and civillian aircraft.   
+Created some general terrain, added planes and a missile spawn. The planes were added to test if the NEAT algorithm could discern between incoming rockets and civillian aircraft.
+<img src="https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_01.gif" width="100" height="100"/>
 ![Alt Text](https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_01.gif)
 
 

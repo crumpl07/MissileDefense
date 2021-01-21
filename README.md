@@ -6,8 +6,7 @@ Goal of the project is to teach a missile defense system to shoot down incoming 
 
 
 Created some general terrain, added planes and a missile spawn. The planes were added to test if the NEAT algorithm could discern between incoming rockets and civillian aircraft.
-<img src="https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_01.gif" width="100" height="100"/>
-![Alt Text](https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_01.gif)
+<img src="https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_01.gif" width="300" height="200"/>
 
 
 Added enemy missiles and explosion upon impact with a friendly missile. The friendly missiles now track the enemy missile (not using NEAT).

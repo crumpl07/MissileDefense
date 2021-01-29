@@ -26,7 +26,7 @@ public class MissileSpawner : MonoBehaviour
 
         
         missile.transform.position = (new Vector3(SAMSite.position.x,
-                                                  SAMSite.position.y + 3,
+                                                  SAMSite.position.y+3,
                                                   SAMSite.position.z));
 
         enemyMissile.transform.position = (new Vector3(Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 1000),

@@ -18,7 +18,7 @@ public class FlyEnemyMissile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.transform.Rotate(.01f, 0.0f, 0.0f, Space.Self);
+        rb.transform.Rotate(-.01f, 0.0f, 0.0f, Space.Self);
         if (transform.position.z < Terrain.transform.position.z ||
             transform.position.z > Terrain.transform.position.z + 1000)
         {

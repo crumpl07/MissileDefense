@@ -8,8 +8,6 @@ public class FlyMissile : MonoBehaviour
     public GameObject EnemyMissile;
     public GameObject Terrain;
 
-    public float enemyMissileVel = 0;
-
     void Start()
     {
         if (EnemyMissile != null)

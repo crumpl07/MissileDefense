@@ -20,3 +20,5 @@ Brackeys. (2012, December 22). Retrieved January 19, 2021, from https://www.yout
 Unity User Manual (2019.4 LTS). (2021, January 19). Retrieved Winter, 2020-2021, from https://docs.unity3d.com/Manual/index.html.
 
 Stanely, K. (2014, December 12). The NeuroEvolution of Augmenting Topologies (NEAT) Users Page. Retrieved January 20, 2021, from https://www.cs.ucf.edu/~kstanley/neat.html
+
+Center of Arms Control and Non-Proliferation. (2021, January 27). GMD: Frequently Asked Questions. https://armscontrolcenter.org/issues/missile-defense/gmd-frequently-asked-questions/. 

@@ -2,7 +2,7 @@
 
 An attempt at building a missile defense system using Unity and NEAT:
 
-Goal of the project is to teach a missile defense system to shoot down incoming missiles using neural evolution of augmented topologies (NEAT).
+Goal of the project is to teach a missile defense system to shoot down incoming missiles using neuroevolution of augmented topologies (NEAT).
 
 
 Created some general terrain, added planes and a missile spawn. The planes were added to test if the NEAT algorithm could discern between incoming rockets and civillian aircraft.

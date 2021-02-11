@@ -13,6 +13,8 @@ Created some general terrain, added planes and a missile spawn. The planes were 
 Added enemy missiles and explosion upon impact with a friendly missile. The friendly missiles now track the enemy missile (not using NEAT). Missile tracking is currently done using unity funtions LookAt() and Transform.forward. These will need to be changed at a later date.
 ![Alt Text](https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_05.gif)
 
+The NEAT algorithm must have a success rate of at least 80% to be better than the current success rate of missile defense systems. The Patriot and THAAD missile defense system is the compared missile defense systems.  
+
 The references are: 
 
 Brackeys. (2012, December 22). Retrieved January 19, 2021, from https://www.youtube.com/channel/UCYbK_tjZ2OrIZFBvU6CCMiA

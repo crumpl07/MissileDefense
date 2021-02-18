@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: -1708389601953778294}
   - component: {fileID: 9106305849411725706}
   - component: {fileID: -1811448732085515078}
+  - component: {fileID: 776856288940632184}
   m_Layer: 0
   m_Name: Missile
   m_TagString: Untagged
@@ -149,7 +150,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6619164616054599240}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5350c9379dc6b32439433054b92e2008, type: 3}
   m_Name: 
@@ -157,3 +158,19 @@ MonoBehaviour:
   EnemyMissile: {fileID: 7290686904279956172, guid: 56a81f96c1f0db4459c2c39aa819b9ac,
     type: 3}
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
+--- !u!114 &776856288940632184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6619164616054599240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efb5268ca8afa8b4e90e213d61188003, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnemyMissile: {fileID: 7290686904279956172, guid: 56a81f96c1f0db4459c2c39aa819b9ac,
+    type: 3}
+  Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
+  enemyVelocity: 150

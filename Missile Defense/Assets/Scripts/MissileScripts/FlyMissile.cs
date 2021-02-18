@@ -24,7 +24,8 @@ public class FlyMissile : MonoBehaviour
     void Update()
     {
         rb.transform.LookAt(EnemyMissile.transform);
-        rb.velocity = rb.transform.forward * 300;
+        rb.velocity = rb.transform.forward * 300; 
+       
 
         if (transform.position.z < Terrain.transform.position.z ||
             transform.position.z > Terrain.transform.position.z + 1000)

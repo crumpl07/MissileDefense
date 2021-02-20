@@ -1,12 +1,12 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!54 &-8496976620790887232
+--- !u!54 &2487874248068645104
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2698037060206725586}
+  m_GameObject: {fileID: 7581480949122136240}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -16,38 +16,48 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &8244039141971702237
+--- !u!65 &4944315837796922421
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2698037060206725586}
+  m_GameObject: {fileID: 7581480949122136240}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.0669227, y: 1.1999998, z: 10.469345}
-  m_Center: {x: 0.033461332, y: -3.35, z: 0.9494164}
---- !u!114 &4441079144039296275
+  m_Size: {x: 1, y: 1, z: 10.5}
+  m_Center: {x: 0, y: -3.35, z: 1}
+--- !u!114 &-5404159405697344562
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2698037060206725586}
+  m_GameObject: {fileID: 7581480949122136240}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5350c9379dc6b32439433054b92e2008, type: 3}
+  m_Script: {fileID: 11500000, guid: cc4809ebe96064a458a34492086bde20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyMissile: {fileID: 7581480949122136240, guid: 5d75cd6029ca24b4585d62041d2875a9,
+  ExplosionEffect: {fileID: 1000011797152326, guid: acf39d9f4addf294d93fa56fa373961b,
     type: 3}
-  enemyMissileLocation: {fileID: 7096833456711180810, guid: 5d75cd6029ca24b4585d62041d2875a9,
-    type: 3}
+--- !u!114 &-295302822382209983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7581480949122136240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036d9e9680c8ef842b551ab960e0359b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
-  enemyMissileVel: 150
---- !u!1001 &3003957819783984259
+  speed: 200
+--- !u!1001 &7347549197251233249
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -77,17 +87,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
@@ -102,23 +112,38 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f6423ff3ae13d57468bead023418d32d,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f6423ff3ae13d57468bead023418d32d,
         type: 3}
       propertyPath: m_Name
-      value: RocketPrefab
+      value: EnemyMissile
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6423ff3ae13d57468bead023418d32d, type: 3}
---- !u!1 &2698037060206725586 stripped
+--- !u!1 &7581480949122136240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f6423ff3ae13d57468bead023418d32d,
     type: 3}
-  m_PrefabInstance: {fileID: 3003957819783984259}
+  m_PrefabInstance: {fileID: 7347549197251233249}
   m_PrefabAsset: {fileID: 0}

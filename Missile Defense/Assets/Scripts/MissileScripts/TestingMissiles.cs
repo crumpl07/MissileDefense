@@ -4,43 +4,51 @@ using UnityEngine;
 
 public class TestingMissiles : MonoBehaviour
 {
+    private Rigidbody rb;
+    public GameObject EnemyMissile;
     public GameObject Terrain;
-    public GameObject MissilePrefab;
-    public GameObject EnemyMissilePrefab;
+    public float enemyVelocity;
+    private Vector3 colPoint;
+    private Vector3 colVelocity;
+    private Vector3 colAngle;
+    private float distanceToCol;
 
-    public float xMissileLauncher = 0;
-    public float yMissileLauncher = 0;
-    public float zMissileLauncher = 0;
-    public float spawnTime = 5;
-
-    //Find the trajectory of the missile
     void Start()
     {
-        StartCoroutine(missileWave());
-    }
 
-    private void spawnMissile()
-    {
-        GameObject missile = Instantiate(MissilePrefab) as GameObject;
-        GameObject enemyMissile = Instantiate(EnemyMissilePrefab) as GameObject;
-
-        missile.transform.position = (new Vector3(xMissileLauncher,
-                                                  yMissileLauncher,
-                                                  zMissileLauncher));
-
-        enemyMissile.transform.position = (new Vector3(800f, 200f, 1000f));
-
-        GameObject explosion;
-        explosion = GameObject.Find("BigExplosionEffect(Clone)");
-        Destroy(explosion);
-    }
-
-    IEnumerator missileWave()
-    {
-        while (true)
+        if (EnemyMissile != null)
         {
-            yield return new WaitForSeconds(spawnTime);
-            spawnMissile();
+            EnemyMissile = GameObject.Find("EnemyMissile(Clone)");
+            GameObject Explosion = GameObject.Find("BigExplosionEffect(Clone)");
+            Destroy(Explosion);
+        }
+
+        rb = this.GetComponent<Rigidbody>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //Find the colPoint
+        colPoint.x = EnemyMissile.transform.position.x;
+        colPoint.y = EnemyMissile.transform.position.y - (9.8f * 3);
+        colPoint.z = 1000 - enemyVelocity * 3;
+
+        //Set the velocityVector
+        colVelocity = colPoint / 3;
+
+        //Find the colAngle
+        colAngle.y = Mathf.Tan(colPoint.x / 450);
+        distanceToCol = Mathf.Sqrt(Mathf.Pow(450,2) + Mathf.Pow(Mathf.Abs(colPoint.x - 500),2));
+        colAngle.x = Mathf.Tan(colPoint.y/distanceToCol);
+
+        rb.velocity = colVelocity;
+        rb.transform.Rotate(colAngle);
+
+        if (transform.position.z < Terrain.transform.position.z ||
+            transform.position.z > Terrain.transform.position.z + 1000)
+        {
+            Destroy(this.gameObject);
         }
     }
 }

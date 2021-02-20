@@ -8,8 +8,6 @@ public class FlyMissile : MonoBehaviour
     public GameObject EnemyMissile;
     public GameObject Terrain;
 
-    public float enemyMissileVel = 0;
-
     void Start()
     {
         if (EnemyMissile != null)
@@ -26,7 +24,8 @@ public class FlyMissile : MonoBehaviour
     void Update()
     {
         rb.transform.LookAt(EnemyMissile.transform);
-        rb.velocity = rb.transform.forward * 300;
+        rb.velocity = rb.transform.forward * 300; 
+       
 
         if (transform.position.z < Terrain.transform.position.z ||
             transform.position.z > Terrain.transform.position.z + 1000)

@@ -8,7 +8,7 @@ public class Explosion : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.gameObject.name == "RocketPrefab(Clone)")
+        if (collision.gameObject.name == "Missile(Clone)")
         {
             Destroy(collision.gameObject);
             Instantiate(ExplosionEffect, transform.position, transform.rotation);

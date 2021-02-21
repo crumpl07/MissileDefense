@@ -173,4 +173,5 @@ MonoBehaviour:
   EnemyMissile: {fileID: 7290686904279956172, guid: 56a81f96c1f0db4459c2c39aa819b9ac,
     type: 3}
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
+  squre: {fileID: 919132149155446097, guid: 3219dc2ccdaa9ca42a344d972d872c00, type: 3}
   enemyVelocity: 150

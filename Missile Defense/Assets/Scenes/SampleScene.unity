@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Terrain: {fileID: 580066412}
-  PlanePrefab: {fileID: 3328871615867121470, guid: bfcd93a3ac8cf8149bb357a88d8a024a,
+  PlanePrefab: {fileID: 7139700967443681755, guid: b49cb3bce84255842adf417362d834ce,
     type: 3}
   height: 275
   spawnTime: 15

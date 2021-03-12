@@ -387,6 +387,64 @@ MonoBehaviour:
   SAMSite: {fileID: 1598219905}
   heightOfEnemyMissile: 200
   spawnTime: 5
+--- !u!1 &1134219242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1134219243}
+  - component: {fileID: 1134219244}
+  m_Layer: 0
+  m_Name: Lidar System
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1134219243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134219242}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 7.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2841076673084583306}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1134219244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134219242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13e4e6b829bf0da40af34ad8c7ba96e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horizontalAngle: 0
+  numberOfLasers: 75
+  rotationSpeedHz: 1
+  rotationAnglePerStep: 1
+  rayDistance: 700
+  upperFOV: 30
+  lowerFOV: 30
+  offset: 0.001
+  upperNormal: 30
+  lowerNormal: -17.9
+  lapTime: 0
+  pointCloudObject: {fileID: 1736132143952386, guid: ac1e55d0508a1af419493814a3887d95,
+    type: 3}
+  lineDrawerPrefab: {fileID: 1440723409778392, guid: 3f754a024cc5f6e4b8b92d6c6a420ffa,
+    type: 3}
 --- !u!4 &1598219905 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6042324398199260291, guid: a4ea63b99ba2fe543b01f883e173f89f,
@@ -692,3 +750,9 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!4 &2841076673084583306 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2592879282193960113, guid: 2af309609afdad14887e8caf0c1f32d4,
+    type: 3}
+  m_PrefabInstance: {fileID: 1143238633391569795}
+  m_PrefabAsset: {fileID: 0}

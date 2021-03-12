@@ -22,6 +22,5 @@ public class TrailerScript : MonoBehaviour
             MissileHolder.transform.LookAt(EnemyMissile.transform);
             MissileHolderBase.transform.LookAt(EnemyMissile.transform);
         }
-
     }
 }

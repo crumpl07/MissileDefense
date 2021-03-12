@@ -7,6 +7,9 @@ public class FlyMissile : MonoBehaviour
     private Rigidbody rb;
     public GameObject EnemyMissile;
     public GameObject Terrain;
+    public float enemyVelocity;
+    private Vector3 colPoint;
+    private float colDistance;
 
     void Start()
     {
@@ -18,19 +21,38 @@ public class FlyMissile : MonoBehaviour
         }
         
         rb = this.GetComponent<Rigidbody>();
+
+        //Find the colPoint
+        colPoint.x = EnemyMissile.transform.position.x;
+        colPoint.y = EnemyMissile.transform.position.y - (14.633f * 3);
+        colPoint.z = 999 - (enemyVelocity * 3);
+
+        //Find the distance between the SAM site and collision point
+        float x = Mathf.Pow((colPoint.x - 500), 2);
+        float y = Mathf.Pow((colPoint.y - 43), 2);
+        float z = Mathf.Pow((colPoint.z - 100), 2);
+        colDistance = Mathf.Sqrt(x + y + z);
+
+        Debug.Log("Collision point:"  + colPoint);
     }
 
     // Update is called once per frame
     void Update()
     {
-        rb.transform.LookAt(EnemyMissile.transform);
-        rb.velocity = rb.transform.forward * 300; 
-       
+        rb.velocity = rb.transform.forward * (colDistance / 3);
+        rb.transform.LookAt(colPoint);
 
+        if (Time.time > 8.95 || Time.time < 9.01)
+            Debug.Log(EnemyMissile.transform.position);
         if (transform.position.z < Terrain.transform.position.z ||
             transform.position.z > Terrain.transform.position.z + 1000)
         {
             Destroy(this.gameObject);
         }
+    }
+
+    public Vector3 getColPoint()
+    {
+        return colPoint;
     }
 }

@@ -18,10 +18,6 @@ public class TestingMissiles : MonoBehaviour
         {
             EnemyMissile = GameObject.Find("EnemyMissile(Clone)");
             GameObject Explosion = GameObject.Find("BigExplosionEffect(Clone)");
-            if(Explosion != null)
-            {
-                Debug.Log("Explosion: " + Explosion.transform.position);
-            }
             Destroy(Explosion);
         }
 
@@ -32,26 +28,20 @@ public class TestingMissiles : MonoBehaviour
         colPoint.y = EnemyMissile.transform.position.y - (14.633f * 3);
         colPoint.z = 998 - (enemyVelocity * 3);
 
-        float x = Mathf.Pow((colPoint.x - SAMsite.transform.position.x), 2);
-        float y = Mathf.Pow((colPoint.y - SAMsite.transform.position.y), 2);
-        float z = Mathf.Pow((colPoint.z - SAMsite.transform.position.z), 2);
-
-        float sum = x + y + z;
-        colDistance = Mathf.Sqrt(sum);
-        Debug.Log("Collison Point: " + colPoint);
-        float speed = colDistance / 3;
+        //Find the distance between the SAM site and collision point
+        float x = Mathf.Pow((colPoint.x - 500),2);
+        float y = Mathf.Pow((colPoint.y - 43),2);
+        float z = Mathf.Pow((colPoint.z - 100),2);
+        colDistance = Mathf.Sqrt(x + y + z);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Time.time > 7.999 && Time.time < 8.003)
-        {
-            Debug.Log("Missile Location: " + EnemyMissile.transform.position);
-        }
-       rb.velocity = rb.transform.forward * (colDistance / 3);
+        rb.velocity = rb.transform.forward * (colDistance / 3);
 
         rb.transform.LookAt(colPoint);
+
         if (transform.position.z < Terrain.transform.position.z ||  
             transform.position.z > Terrain.transform.position.z + 1000)
         {

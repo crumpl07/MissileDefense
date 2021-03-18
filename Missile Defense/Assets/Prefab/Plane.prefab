@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7520589848752556897}
   - component: {fileID: -7122641003756142547}
-  - component: {fileID: 5316094778540776373}
+  - component: {fileID: 5900290448902238941}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -126,19 +126,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
---- !u!54 &5316094778540776373
-Rigidbody:
+--- !u!64 &5900290448902238941
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7139700967443681755}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: -1
+  m_Mesh: {fileID: -2432090755550338912, guid: c99314cfaa6145c48b313d6a16df699a, type: 3}

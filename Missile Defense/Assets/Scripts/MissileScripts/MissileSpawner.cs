@@ -23,21 +23,17 @@ public class MissileSpawner : MonoBehaviour
     {
         
         GameObject enemyMissile = Instantiate(EnemyMissilePrefab) as GameObject;
-
-        enemyMissile.transform.position = (new Vector3(Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 1000),
-                                        Terrain.transform.position.y + heightOfEnemyMissile,
-                                        Terrain.transform.position.z + 1149));
-
-
-    }
-
-    private void spawnFriendlyMissile()
-    {
         GameObject missile = Instantiate(MissilePrefab) as GameObject;
 
+        enemyMissile.transform.position = (new Vector3(
+                                        Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 1000),
+                                        Terrain.transform.position.y + heightOfEnemyMissile,
+                                        Terrain.transform.position.z + 1000));
+        
         missile.transform.position = (new Vector3(SAMSite.position.x,
                                           SAMSite.position.y,
                                           SAMSite.position.z));
+
     }
 
     IEnumerator missileWave()
@@ -46,8 +42,6 @@ public class MissileSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(spawnTime);
             spawnEnemyMissile();
-            yield return new WaitForSeconds(1);
-            spawnFriendlyMissile();
         }
     }
 }

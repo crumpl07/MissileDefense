@@ -20,7 +20,7 @@ public class FlyEnemyMissile : MonoBehaviour
     {
         rb.transform.Rotate(-.01f, 0.0f, 0.0f, Space.Self);
         if (transform.position.z < Terrain.transform.position.z ||
-            transform.position.z > Terrain.transform.position.z + 1150)
+            transform.position.z > Terrain.transform.position.z + 1001)
         {
             Destroy(this.gameObject);
         }

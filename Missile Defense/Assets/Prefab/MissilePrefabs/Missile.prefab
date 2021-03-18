@@ -142,7 +142,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.25, z: 14}
+  m_Size: {x: 1.3, y: 1.25, z: 14}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-1811448732085515078
 MonoBehaviour:
@@ -159,6 +159,7 @@ MonoBehaviour:
   EnemyMissile: {fileID: 7290686904279956172, guid: 56a81f96c1f0db4459c2c39aa819b9ac,
     type: 3}
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
+  SAMsite: {fileID: 6382012620935241273, guid: a4ea63b99ba2fe543b01f883e173f89f, type: 3}
   enemyVelocity: 150
 --- !u!114 &776856288940632184
 MonoBehaviour:

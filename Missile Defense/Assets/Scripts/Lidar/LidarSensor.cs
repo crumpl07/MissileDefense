@@ -177,11 +177,10 @@ public class LidarSensor : MonoBehaviour {
                     float distance = hit.distance;
                     if (distance != 0) // Didn't hit anything, don't add to list.
                     {
-                        if (hit.collider)
+                        if (hit.collider && hit.collider.name != "Terrain")
                         {
                             Debug.Log(hit.collider.transform.position);
                             Debug.Log(hit.collider.name);
-                            
                         }
                         float verticalAngle = laser.GetVerticalAngle();
                         hits.AddLast(new SphericalCoordinate(distance, verticalAngle, horizontalAngle, hit.point, laser.GetLaserId()));
@@ -193,7 +192,7 @@ public class LidarSensor : MonoBehaviour {
             // Notify listeners that the lidar sensor have scanned points. 
             //if (OnScanned != null  && pointCloudObject != null && pointCloudObject.activeInHierarchy)
             //{
-           // OnScanned(lastLapTime, hits);
+            // OnScanned(lastLapTime, hits);
             //}
 
         }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jhaeh\\source\\repos\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj": {}
+    "C:\\Users\\jhaeh\\Documents\\GitHub\\MissileDefense\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jhaeh\\source\\repos\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj": {
+    "C:\\Users\\jhaeh\\Documents\\GitHub\\MissileDefense\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jhaeh\\source\\repos\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj",
+        "projectUniqueName": "C:\\Users\\jhaeh\\Documents\\GitHub\\MissileDefense\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj",
         "projectName": "CSharpNeat",
-        "projectPath": "C:\\Users\\jhaeh\\source\\repos\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj",
+        "projectPath": "C:\\Users\\jhaeh\\Documents\\GitHub\\MissileDefense\\CSharpNeat\\CSharpNeat\\CSharpNeat.csproj",
         "packagesPath": "C:\\Users\\jhaeh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jhaeh\\source\\repos\\CSharpNeat\\CSharpNeat\\obj\\",
+        "outputPath": "C:\\Users\\jhaeh\\Documents\\GitHub\\MissileDefense\\CSharpNeat\\CSharpNeat\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\jhaeh\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -171,7 +171,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
-  speed: 150
+  Base: {fileID: 7157107901492619521, guid: dffbee54130fda449be2a7a2526df227, type: 3}
+  speed: 250
 --- !u!1001 &766301730961792233
 PrefabInstance:
   m_ObjectHideFlags: 0

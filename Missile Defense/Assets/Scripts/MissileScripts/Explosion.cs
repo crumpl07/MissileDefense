@@ -14,5 +14,11 @@ public class Explosion : MonoBehaviour
             Instantiate(ExplosionEffect, transform.position, transform.rotation);
             Destroy(gameObject);
         }
+
+        if(collision.gameObject.name == "Terrain")
+        {
+            Instantiate(ExplosionEffect, transform.position, transform.rotation);
+            Destroy(gameObject);
+        }
     }
 }

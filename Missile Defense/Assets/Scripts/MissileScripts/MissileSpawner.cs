@@ -10,7 +10,7 @@ public class MissileSpawner : MonoBehaviour
     public GameObject EnemyMissilePrefab;
     public Transform SAMSite;
 
-    public float heightOfEnemyMissile = 200;
+    public float heightOfEnemyMissile = 300;
     public float spawnTime = 10;
 
     //Find the trajectory of the missile
@@ -26,13 +26,13 @@ public class MissileSpawner : MonoBehaviour
         GameObject missile = Instantiate(MissilePrefab) as GameObject;
 
         enemyMissile.transform.position = (new Vector3(
-                                        Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 1000),
+                                        Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 2000),
                                         Terrain.transform.position.y + heightOfEnemyMissile,
-                                        Terrain.transform.position.z + 1000));
+                                        Terrain.transform.position.z + 3000));
         
         missile.transform.position = (new Vector3(SAMSite.position.x,
-                                          SAMSite.position.y,
-                                          SAMSite.position.z));
+                                                  SAMSite.position.y,
+                                                  SAMSite.position.z));
 
     }
 

@@ -19,7 +19,7 @@ public class FlyPlane : MonoBehaviour
     void Update()
     {
         if(transform.position.z < Terrain.transform.position.z ||
-            transform.position.z > Terrain.transform.position.z + 1000)
+           transform.position.z > Terrain.transform.position.z + 3000)
         {
             Destroy(this.gameObject);
         }

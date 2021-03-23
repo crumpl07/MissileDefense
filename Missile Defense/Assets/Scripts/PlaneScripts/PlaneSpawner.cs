@@ -17,9 +17,9 @@ public class PlaneSpawner : MonoBehaviour
     private void spawnPlane()
     {
         GameObject plane = Instantiate(PlanePrefab) as GameObject;
-        plane.transform.position = (new Vector3(Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 1000),
+        plane.transform.position = (new Vector3(Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 2000),
                                                 Terrain.transform.position.y + height,
-                                                Terrain.transform.position.z + 999));
+                                                Terrain.transform.position.z + 3000));
     }
 
     IEnumerator planeWave()

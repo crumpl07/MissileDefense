@@ -6,7 +6,6 @@ public class FlyMissile : MonoBehaviour
 {
     private Rigidbody rb;
     public GameObject EnemyMissile;
-    public GameObject Terrain;
     public GameObject SAMsite;
     public float enemyVelocity;
     private Vector3 colPoint;
@@ -29,9 +28,9 @@ public class FlyMissile : MonoBehaviour
         colPoint.z = 998 - (enemyVelocity * 3);
 
         //Find the distance between the SAM site and collision point
-        float x = Mathf.Pow((colPoint.x - 500), 2);
-        float y = Mathf.Pow((colPoint.y - 43), 2);
-        float z = Mathf.Pow((colPoint.z - 100), 2);
+        float x = Mathf.Pow((colPoint.x - SAMsite.transform.position.x), 2);
+        float y = Mathf.Pow((colPoint.y - SAMsite.transform.position.y), 2);
+        float z = Mathf.Pow((colPoint.z - SAMsite.transform.position.z), 2);
         colDistance = Mathf.Sqrt(x + y + z);
     }
 
@@ -41,11 +40,5 @@ public class FlyMissile : MonoBehaviour
         rb.velocity = rb.transform.forward * (colDistance / 3);
 
         rb.transform.LookAt(colPoint);
-
-        if (transform.position.z < Terrain.transform.position.z ||
-            transform.position.z > Terrain.transform.position.z + 1000)
-        {
-            Destroy(this.gameObject);
-        }
     }
 }

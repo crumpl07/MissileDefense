@@ -9,7 +9,7 @@ public class FlyEnemyMissile : MonoBehaviour
     public GameObject Terrain;
     public GameObject Base;
     public float speed = 150;
-
+    private float acceleration;
     void Start()
     {
         rb = this.GetComponent<Rigidbody>();
@@ -19,8 +19,14 @@ public class FlyEnemyMissile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(speed < 250)
+        {
+            speed += .1f;
+        }
+        print(speed);
         transform.LookAt(Base.transform);
-        rb .velocity = transform.forward * 250;
+        rb.velocity = transform.forward * speed ;
+
         if (transform.position.z < Terrain.transform.position.z ||
             transform.position.z > Terrain.transform.position.z + 3000)
         {

@@ -106,7 +106,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7290686904279956172}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -114,7 +114,7 @@ Transform:
   - {fileID: 769067291156703225}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!54 &-1175041063248314513
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Terrain: {fileID: 2224773006321452127, guid: 8a5350612b8736b47b93f0e5ea5abdec, type: 3}
   Base: {fileID: 7157107901492619521, guid: dffbee54130fda449be2a7a2526df227, type: 3}
-  speed: 250
+  speed: 200
 --- !u!1001 &766301730961792233
 PrefabInstance:
   m_ObjectHideFlags: 0

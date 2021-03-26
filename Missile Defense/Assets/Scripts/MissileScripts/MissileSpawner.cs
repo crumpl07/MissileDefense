@@ -25,10 +25,18 @@ public class MissileSpawner : MonoBehaviour
         GameObject enemyMissile = Instantiate(EnemyMissilePrefab) as GameObject;
         GameObject missile = Instantiate(MissilePrefab) as GameObject;
 
-        enemyMissile.transform.position = (new Vector3(
-                                        Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 2000),
-                                        Terrain.transform.position.y + heightOfEnemyMissile,
-                                        Terrain.transform.position.z + 3000));
+        int randNum = 0;
+        randNum = Random.Range(1, 3);
+        switch(randNum)
+        {
+            case 1: SpawnBack(enemyMissile);
+                break;
+            case 2: SpawnLeft(enemyMissile);
+                break;
+            case 3: SpawnRight(enemyMissile);
+                break;
+        }
+
         
         missile.transform.position = (new Vector3(SAMSite.position.x,
                                                   SAMSite.position.y,
@@ -43,5 +51,29 @@ public class MissileSpawner : MonoBehaviour
             yield return new WaitForSeconds(spawnTime);
             spawnEnemyMissile();
         }
+    }
+
+    void SpawnBack(GameObject enemyMissile)
+    {
+        enemyMissile.transform.position = (new Vector3(
+                                        Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 3000),
+                                        Terrain.transform.position.y + heightOfEnemyMissile,
+                                        Terrain.transform.position.z + 3000));
+    }
+
+    void SpawnLeft(GameObject enemyMissile)
+    {
+        enemyMissile.transform.position = (new Vector3(
+                                                       Terrain.transform.position.x, 
+                                                       Terrain.transform.position.y + heightOfEnemyMissile,
+                                                       Random.Range(Terrain.transform.position.z + 1000, Terrain.transform.position.z + 3000)));
+    }
+
+    void SpawnRight(GameObject enemyMissile)
+    {
+        enemyMissile.transform.position = (new Vector3(
+                                                        Terrain.transform.position.x + 3000,
+                                                        Terrain.transform.position.y + heightOfEnemyMissile,
+                                                        Random.Range(Terrain.transform.position.z + 1000, Terrain.transform.position.z + 3000)));
     }
 }

@@ -553,7 +553,7 @@ MonoBehaviour:
   EnemyMissilePrefab: {fileID: 7290686904279956172, guid: 56a81f96c1f0db4459c2c39aa819b9ac,
     type: 3}
   SAMSite: {fileID: 1598219905}
-  heightOfEnemyMissile: 200
+  heightOfEnemyMissile: 250
   spawnTime: 5
 --- !u!1001 &1024104803
 PrefabInstance:
@@ -682,25 +682,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e4e6b829bf0da40af34ad8c7ba96e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastUpdate: 0
-  horizontalAngle: 0
-  numberOfLasers: 75
-  rotationSpeedHz: 1
-  rotationAnglePerStep: 1
-  rayDistance: 700
-  upperFOV: 30
-  lowerFOV: 30
-  offset: 0.001
-  upperNormal: 30
-  lowerNormal: -17.9
-  lapTime: 0
-  isPlaying: 0
-  pointCloudObject: {fileID: 1736132143952386, guid: ac1e55d0508a1af419493814a3887d95,
-    type: 3}
-  previousUpdate: 0
-  lastLapTime: 0
-  lineDrawerPrefab: {fileID: 1440723409778392, guid: 3f754a024cc5f6e4b8b92d6c6a420ffa,
-    type: 3}
 --- !u!1 &1208957801
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,7 +806,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1608905078}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: b44bc2efe15e044409ee66b16eb8ec0e, type: 3}

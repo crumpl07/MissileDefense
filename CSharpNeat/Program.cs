@@ -15,8 +15,8 @@ namespace CSharpNeat
             List<double> outputs = new List<double>();
 
             //Console.WriteLine(indiv.Connections.Count);
-            
-            for(int i = 0; i < indiv.Connections.Count; i++)
+
+            for (int i = 0; i < indiv.Connections.Count; i++)
             {
                 Console.WriteLine(indiv.Connections[i].toString());
             }
@@ -30,12 +30,12 @@ namespace CSharpNeat
             }
 
             outputs = indiv.feedForward(inputs);
-            for(int i = 0; i < outputs.Count; i++)
+            for (int i = 0; i < outputs.Count; i++)
             {
                 Console.WriteLine(outputs[i]);
             }
-            
-            
+
+
         }
     }
 }

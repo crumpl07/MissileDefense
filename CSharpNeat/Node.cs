@@ -12,7 +12,7 @@ namespace CSharpNeat
         private double value;
         private NodeType nodeType;
         private int nodeNum;
-         
+
         public Node(int nodeNum)
         {
             this.nodeNum = nodeNum;
@@ -26,7 +26,7 @@ namespace CSharpNeat
             previousLayerNeurons = new List<Node>();
             weights = new List<double>();
         }
-        
+
         public List<double> Weights { get => weights; set => weights = value; }
         public int NodeNum { get => nodeNum; set => nodeNum = value; }
         public List<int> InputNodeNums { get => inputNodeNums; set => inputNodeNums = value; }
@@ -52,7 +52,7 @@ namespace CSharpNeat
                 sum += (Weights[i] * previousLayerNeurons[i].Value);
             }
 
-           
+
             value = LogSigmoid(sum);
             return value;
         }

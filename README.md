@@ -11,7 +11,7 @@ Created some general terrain, added planes and a missile spawn. The planes were 
 
 
 Added enemy missiles and explosion upon impact with a friendly missile. The friendly missiles now track the enemy missile (not using NEAT). Missile tracking is currently done using unity funtions LookAt() and Transform.forward. These will need to be changed at a later date.
-![Alt Text](https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_05.gif)
+(https://github.com/crumpl07/MissileDefense/blob/main/Video/MissileStuff_05.gif)
 
 The references are: 
 

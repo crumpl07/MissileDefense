@@ -34,8 +34,6 @@ namespace CSharpNeat
             {
                 Console.WriteLine(outputs[i]);
             }
-
-
         }
     }
 }

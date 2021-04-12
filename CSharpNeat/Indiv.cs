@@ -191,6 +191,18 @@ namespace CSharpNeat
             return false;
         }
 
+        public Boolean conIsInNetwork(int conNum)
+        {
+            for (int i = 0; i < connections.Count; i++)
+            {
+                if (connections[i].InnovNum == conNum)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public int networkSize()
         {
             int largest = 0;
@@ -202,5 +214,21 @@ namespace CSharpNeat
             return largest;
         }
 
+        public int getNumConnections()
+        {
+            return connections.Count;
+        }
+
+        public double getWeightOfConNum(int conNum)
+        {
+            for (int i = 0; i < connections.Count; i++)
+            {
+                if (connections[i].InnovNum == conNum)
+                {
+                    return connections[i].Weight;
+                }
+            }
+            return double.NaN;
+        }
     }
 }

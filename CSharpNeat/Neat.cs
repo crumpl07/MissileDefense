@@ -83,6 +83,5 @@ namespace CSharpNeat
             temp.Connections = connections;
             return temp;
         }
-
     }
 }

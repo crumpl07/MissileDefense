@@ -8,33 +8,16 @@ namespace CSharpNeat
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            Indiv indiv = new Indiv(10, 10);
-
-            double[] inputs = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
-
-            List<double> outputs = new List<double>();
-
-            //Console.WriteLine(indiv.Connections.Count);
-
-            for (int i = 0; i < indiv.Connections.Count; i++)
-            {
-                Console.WriteLine(indiv.Connections[i].toString());
-            }
-
-            Console.WriteLine(indiv.networkSize());
+            Indiv indiv = new Indiv(2, 1);
+            Indiv indiv1 = new Indiv(2, 1);
+            Neat neat = new Neat();
 
             indiv.assembleNetwork();
-            for (int i = 0; i < indiv.Nodes.Count; i++)
-            {
-                Console.WriteLine(indiv.Nodes[i].NodeType + " " + indiv.Nodes[i].NodeNum);
-            }
+            indiv.mutate(indiv.Connections.Count + 1);
+            indiv1.mutate(indiv1.Connections.Count + 1);
+            indiv1.assembleNetwork();
 
-            outputs = indiv.feedForward(inputs);
-            for (int i = 0; i < outputs.Count; i++)
-            {
-                Console.WriteLine(outputs[i]);
-            }
-
+            Console.WriteLine(neat.compareDistance(indiv, indiv1));
 
         }
     }

@@ -15,9 +15,18 @@ namespace CSharpNeat
             indiv.assembleNetwork();
             indiv.mutate(indiv.Connections.Count + 1);
             indiv1.mutate(indiv1.Connections.Count + 1);
+            indiv.assembleNetwork();
             indiv1.assembleNetwork();
 
+
             Console.WriteLine(neat.compareDistance(indiv, indiv1));
+
+            for (int i = 0; i < indiv.Connections.Count; i++)
+            {
+                Console.WriteLine(indiv.Connections[i].toString());
+            }
+
+            
 
         }
     }

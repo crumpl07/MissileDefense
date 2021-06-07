@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CSharpNeat
 {
     class Neat
     {
+        private double compatThresh;
         private int innovationCount;
         private List<Indiv> population;
         private Random rand = new Random();
@@ -13,19 +15,124 @@ namespace CSharpNeat
         public Neat()
         {
             innovationCount = 0;
+            compatThresh = 0.25;
+            population = new List<Indiv>();
+        }
+        public Neat(double compatThresh)
+        {
+            innovationCount = 0;
+            this.compatThresh = compatThresh;
+            population = new List<Indiv>();
         }
 
-        public int sharingFunction(Indiv indiv,Indiv indiv1, double compatThresh)
+        public int sharingFunction(Indiv indiv, Indiv indiv1, double compatThresh)
         {
-            int count = 0;
 
-            if(compareDistance(indiv,indiv1) > compatThresh)
+            if (compareDistance(indiv, indiv1) > compatThresh)
             {
-                count++;
+                return 1;
             }
-        
-            return count;
 
+            return 0;
+
+        }
+
+        //creates a pop of individuals with the given parameters
+        public void initializePop(int pop, int numInputNodes, int numOutputNodes)
+        {
+            for (int i = 0; i < pop; i++)
+            {
+                population.Add(new Indiv(numInputNodes, numOutputNodes));
+            }
+        }
+
+        public double[] returnRow(double[,] matrix, int row)
+        {
+            double[] temp = new double[matrix.GetLength(0)]; 
+            for(int i = 0; i < matrix.GetLength(0); i++)
+            {
+                temp[i] = matrix[row, i];
+            }
+            return temp;
+        }
+
+        //computes the fitness of the given population
+        public void computeFitness(double[,] inputs, double[] expectedOutputs)
+        {
+            for(int i = 0; i < population.Count; i++)
+            {
+                double totalDiff = 0;
+                for(int j = 0; j < inputs.GetLength(1); j++)
+                {
+                    double[] temp = returnRow(inputs, j);
+                    List<double> outputs = population[i].feedForward(temp);
+
+                    for(int k = 0; k < expectedOutputs.Length; k++)
+                    {
+                        totalDiff += Math.Abs(outputs[i] - expectedOutputs[i]);
+                    }
+                    
+                }
+
+                population[i].Fitness = Math.Pow(expectedOutputs.Length - totalDiff,2);
+            }
+        }
+
+        //adjusts the fitness of the population based on the equation from the paper
+        public void adjustPopFit()
+        {
+            for(int i = 0; i < population.Count; i++)
+            {
+                population[i].Fitness = adjustedFitness(population[i], population, compatThresh);
+            }
+        }
+
+        //divides the population into species then mates
+        //percentMating is the percentage of the population with the highest fitness that will pass their genes on
+        public void speciateMate(double percentMating)
+        {
+            population.OrderBy(o => o.Fitness).ToList();
+
+            List<Indiv> nextGen = new List<Indiv>();
+
+            int numParents = (int)(population.Count * percentMating + .50);
+
+            for(int i = population.Count - 1; i > population.Count - numParents; i--)
+            {
+                List<Indiv> species = speciesList(population[i], population);
+                species.OrderBy(o => o.Fitness).ToList();
+                int numSpeciesParents = (int)(species.Count * percentMating + 0.5);
+                for(int j = species.Count - 2; j > species.Count - numSpeciesParents; j--)
+                {
+                    nextGen.Add(crossOver(population[i], species[j]));
+                }
+            }
+
+            population = nextGen;
+        }
+
+        //mutates the popluation and increments the innovation count
+        public void mutatePop()
+        {
+            for(int i = 0; i < population.Count; i++)
+            {
+                population[i].mutate(innovationCount);
+            }
+            innovationCount++;
+        }
+            
+        //returns a list of all of the individauls in the same species as the given indiv
+        public List<Indiv> speciesList(Indiv speciesExample, List<Indiv> population)
+        {
+            List<Indiv> ret = new List<Indiv>();
+            for(int i = 0; i < population.Count; i++)
+            {
+                if(sharingFunction(speciesExample,population[i],compatThresh) == 1)
+                {
+                    ret.Add(population[i]);
+                }
+            }
+            return ret;
         }
 
         public int lengthOfdisjoint(Indiv parent1, Indiv parent2, int index)

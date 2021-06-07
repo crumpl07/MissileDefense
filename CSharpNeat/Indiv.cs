@@ -29,12 +29,13 @@ namespace CSharpNeat
                 for (int j = 0; j < numOutputNodes; j++)
                 {
                     Node temp1 = new Node(i);
-                    Node temp2 = new Node(i + numInputNodes);
+                    Node temp2 = new Node(j + numInputNodes);
                     temp1.NodeType = NodeType.Sensor;
                     temp2.NodeType = NodeType.Output;
 
                     Connection temp = new Connection(temp1, temp2, 1.0, (i + j));
                     temp.IsEnabled = true;
+                    Console.WriteLine(temp.toString());
                     connections.Add(temp);
                     //idk how good of an idea this is but the innovation nums are just the initial position in the connections List
                 }
@@ -114,10 +115,13 @@ namespace CSharpNeat
             }
             else
             {
-                inputNodeNumber = rand.Next(numInputNodes, nodes.Count - 1);
+                inputNodeNumber = rand.Next(numInputNodes + numOutputNodes, nodes.Count - 1);
             }
 
-            int outputNodeNumber = rand.Next(numInputNodes - 1, nodes.Count - 1);
+            int outputNodeNumber = rand.Next(numInputNodes, nodes.Count - 1);
+
+
+            
 
             Node inputNode = nodes[inputNodeNumber];
             Node outputNode = nodes[outputNodeNumber];

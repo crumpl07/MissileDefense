@@ -7,7 +7,7 @@ namespace CSharpNeat
 {
     class Indiv
     {
-        private Random rand;
+        private Random rand = new Random();
 
         private List<Node> nodes;
         private List<Connection> connections;
@@ -104,7 +104,46 @@ namespace CSharpNeat
 
         public void mutate(int innovNum)//uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuhhhh idk how often we want these mutations to occur
         {
+            double mutType = rand.NextDouble();
 
+            //selecting nodes to connect to
+            int inputNodeNumber = 0;
+            if(rand.NextDouble() > numInputNodes / nodes.Count)
+            {
+                inputNodeNumber = rand.Next(0, numInputNodes - 1);
+            }
+            else
+            {
+                inputNodeNumber = rand.Next(numInputNodes, nodes.Count - 1);
+            }
+
+            int outputNodeNumber = rand.Next(numInputNodes - 1, nodes.Count - 1);
+
+            Node inputNode = nodes[inputNodeNumber];
+            Node outputNode = nodes[outputNodeNumber];
+
+            //connecting the nodes either with a new node or with a regular connection 
+            if(mutType > .5)
+            {
+                //add new node
+                Node temp = new Node(nodes.Count - 1);
+
+                Connection temp1 = new Connection(inputNode, temp, rand.NextDouble(), innovNum);
+                Connection temp2 = new Connection(temp, outputNode, rand.NextDouble(), innovNum + 1);
+
+                connections.Add(temp1);
+                connections.Add(temp2);
+
+
+            }
+            else
+            {
+                //add new connection 
+                //this is the same thing as updating a weigth if it happens to an existing connection
+
+                Connection temp1 = new Connection(inputNode, outputNode, rand.NextDouble(), innovNum);
+                connections.Add(temp1);
+            }
         }
 
         public void assembleNetwork()
@@ -112,7 +151,7 @@ namespace CSharpNeat
 
             //The clear is to ensure the last build is not messing anything up in the current build
             // It is the job of the connections List to hold the changes 
-
+            
 
 
             for (int i = 0; i < connections.Count; i++)

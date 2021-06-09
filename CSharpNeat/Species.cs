@@ -9,7 +9,7 @@ namespace CSharpNeat
     class Species {
         private Indiv representative;
         private List<Indiv> members;
-        private double fitness;
+        private double totalfitness;
         double c1 = 1; //These coefficients are gonna have to be played with until we get something that feels right.
         double c2 = 1;
         double c3 = 1;
@@ -26,17 +26,20 @@ namespace CSharpNeat
         }
         
         public void calcFitness()
-            /*
-             * note: I've made an assumption here that the species should have a fitness, rather than re-calculating distance
-             * after training to get a shared fitness value for each agent. Otherwise, why bother with species?
-             */
         {
-            double fitnessSum = 0;
+            totalfitness = 0;
             for (int i = 0; i < members.Count; i++)
             {
-                fitnessSum += members[i].Fitness;
+                totalfitness += members[i].Fitness;
             }
-            fitness = fitnessSum / members.Count;
+        }
+
+        public void distFitness()
+        {
+            for (int i = 0; i < members.Count; i++)
+            {
+                members[i].addMembership(totalfitness, members.Count);
+            }
         }
 
         public Boolean isCompatible(Indiv toComp, double tolerance)
@@ -98,6 +101,26 @@ namespace CSharpNeat
             //The actual compatibility distance calculation after all of the variables have been found
             double compDistance = (c1 * numExcess / largerConnection) + (c2 * numDisjoint / largerConnection) + (c3 * weightDiffTotal);
             return compDistance;
+        }
+
+        public int getSize()
+        {
+            return members.Count;
+        }
+
+        public double getFitness()
+        {
+            return totalfitness;
+        }
+
+        public void addMember(Indiv addThis)
+        {
+            members.Add(addThis);
+        }
+
+        public Boolean hasMember(Indiv compThis)
+        {
+            return members.Contains(compThis);
         }
     }
 }

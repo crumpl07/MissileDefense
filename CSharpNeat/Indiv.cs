@@ -7,14 +7,13 @@ namespace CSharpNeat
 {
     class Indiv
     {
-        private Random rand;
+        private Random rand = new Random();
+
         private List<Node> nodes;
         private List<Connection> connections;
         private int numOutputNodes; 
         private int numInputNodes;
         private double fitness;
-        private double cumFitness;
-        private int cumMembers;
 
         //make new list of nodes everytime feed forward is called 
 
@@ -30,12 +29,13 @@ namespace CSharpNeat
                 for (int j = 0; j < numOutputNodes; j++)
                 {
                     Node temp1 = new Node(i);
-                    Node temp2 = new Node(i + numInputNodes);
+                    Node temp2 = new Node(j + numInputNodes);
                     temp1.NodeType = NodeType.Sensor;
                     temp2.NodeType = NodeType.Output;
 
                     Connection temp = new Connection(temp1, temp2, 1.0, (i + j));
                     temp.IsEnabled = true;
+                    Console.WriteLine(temp.toString());
                     connections.Add(temp);
                     //idk how good of an idea this is but the innovation nums are just the initial position in the connections List
                 }
@@ -105,7 +105,49 @@ namespace CSharpNeat
 
         public void mutate(int innovNum)//uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuhhhh idk how often we want these mutations to occur
         {
+            double mutType = rand.NextDouble();
 
+            //selecting nodes to connect to
+            int inputNodeNumber = 0;
+            if(rand.NextDouble() > numInputNodes / nodes.Count)
+            {
+                inputNodeNumber = rand.Next(0, numInputNodes - 1);
+            }
+            else
+            {
+                inputNodeNumber = rand.Next(numInputNodes + numOutputNodes, nodes.Count - 1);
+            }
+
+            int outputNodeNumber = rand.Next(numInputNodes, nodes.Count - 1);
+
+
+            
+
+            Node inputNode = nodes[inputNodeNumber];
+            Node outputNode = nodes[outputNodeNumber];
+
+            //connecting the nodes either with a new node or with a regular connection 
+            if(mutType > .5)
+            {
+                //add new node
+                Node temp = new Node(nodes.Count - 1);
+
+                Connection temp1 = new Connection(inputNode, temp, rand.NextDouble(), innovNum);
+                Connection temp2 = new Connection(temp, outputNode, rand.NextDouble(), innovNum + 1);
+
+                connections.Add(temp1);
+                connections.Add(temp2);
+
+
+            }
+            else
+            {
+                //add new connection 
+                //this is the same thing as updating a weigth if it happens to an existing connection
+
+                Connection temp1 = new Connection(inputNode, outputNode, rand.NextDouble(), innovNum);
+                connections.Add(temp1);
+            }
         }
 
         public void assembleNetwork()
@@ -113,7 +155,7 @@ namespace CSharpNeat
 
             //The clear is to ensure the last build is not messing anything up in the current build
             // It is the job of the connections List to hold the changes 
-
+            
 
 
             for (int i = 0; i < connections.Count; i++)
@@ -192,18 +234,6 @@ namespace CSharpNeat
             return false;
         }
 
-        public Boolean conIsInNetwork(int conNum)
-        {
-            for (int i = 0; i < connections.Count; i++)
-            {
-                if (connections[i].InnovNum == conNum)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public int networkSize()
         {
             int largest = 0;
@@ -215,34 +245,5 @@ namespace CSharpNeat
             return largest;
         }
 
-        public int getNumConnections()
-        {
-            return connections.Count;
-        }
-
-        public double getWeightOfConNum(int conNum)
-        {
-            for (int i = 0; i < connections.Count; i++)
-            {
-                if (connections[i].InnovNum == conNum)
-                {
-                    return connections[i].Weight;
-                }
-            }
-            return double.NaN;
-        }
-
-        public void addMembership(double fitSum, int memberTotal)
-        {
-            cumFitness += fitSum;
-            cumMembers += memberTotal;
-        }
-
-        public void compAdjustedFitness()
-        {
-            fitness = cumFitness / ((double)cumMembers);
-            cumFitness = 0;
-            cumMembers = 0;
-        }
     }
 }

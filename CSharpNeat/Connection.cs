@@ -30,7 +30,7 @@ namespace CSharpNeat
 
         public string toString()
         {
-            return "In Node " + inNode + " Out Node " + outNode;
+            return "In Node " + inNode.NodeNum + " Out Node " + outNode.NodeNum;
         }
     }
 }

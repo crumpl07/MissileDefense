@@ -40,7 +40,7 @@ public class TestingMissiles : MonoBehaviour
     {
         rb.velocity = rb.transform.forward * (colDistance / 3);
 
-        rb.transform.LookAt(colPoint);
+        rb.transform.LookAt(EnemyMissile.transform.position);
 
         if (transform.position.z < Terrain.transform.position.z ||  
             transform.position.z > Terrain.transform.position.z + 1000)

@@ -12,7 +12,13 @@ public class MissileSpawner : MonoBehaviour
 
     public float heightOfEnemyMissile = 300;
     public float spawnTime = 10;
+    public float missileNumber = 0;
 
+
+    public MissileSpawner()
+    {
+        
+    }
     //Find the trajectory of the missile
     void Start()
     {
@@ -21,8 +27,8 @@ public class MissileSpawner : MonoBehaviour
 
     private void spawnEnemyMissile()
     {
-        
         GameObject enemyMissile = Instantiate(EnemyMissilePrefab) as GameObject;
+        //enemyMissile.name = ("EnemyMissile" + missileNumber);
         GameObject missile = Instantiate(MissilePrefab) as GameObject;
 
         int randNum = 0;
@@ -44,12 +50,19 @@ public class MissileSpawner : MonoBehaviour
 
     }
 
+    public float getMissileNumber()
+    {
+        return missileNumber;
+    }
+
     IEnumerator missileWave()
     {
+
         while(true)
         {
             yield return new WaitForSeconds(spawnTime);
             spawnEnemyMissile();
+            missileNumber++;
         }
     }
 

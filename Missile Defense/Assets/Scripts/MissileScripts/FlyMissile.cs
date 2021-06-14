@@ -10,12 +10,15 @@ public class FlyMissile : MonoBehaviour
     public float enemyVelocity;
     private Vector3 colPoint;
     private float colDistance;
+    private float missileNumber = 0;
     void Start()
     {
-
-        if (EnemyMissile != null)
+        MissileSpawner missileNumber = new MissileSpawner();
+        if (EnemyMissile != null) 
         {
+            Debug.Log("Enemy Missile: " + missileNumber.getMissileNumber());
             EnemyMissile = GameObject.Find("EnemyMissile(Clone)");
+            //EnemyMissile = GameObject.Find("EnemyMissile" + missileNumber.getMissileNumber());
             GameObject Explosion = GameObject.Find("BigExplosionEffect(Clone)");
             Destroy(Explosion);
         }
@@ -39,6 +42,6 @@ public class FlyMissile : MonoBehaviour
     {
         rb.velocity = rb.transform.forward * (colDistance / 3);
 
-        rb.transform.LookAt(colPoint);
+        rb.transform.LookAt(EnemyMissile.transform.position);
     }
 }

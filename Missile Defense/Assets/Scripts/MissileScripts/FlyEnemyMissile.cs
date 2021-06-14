@@ -23,7 +23,6 @@ public class FlyEnemyMissile : MonoBehaviour
         {
             speed += .1f;
         }
-        print(speed);
         transform.LookAt(Base.transform);
         rb.velocity = transform.forward * speed ;
 

@@ -13,8 +13,9 @@ namespace CSharpNeat
         private NodeType nodeType;
         private int nodeNum;
 
-        public Node(int nodeNum)
+        public Node(int nodeNum, NodeType nodeType)
         {
+            this.nodeType = nodeType;
             this.nodeNum = nodeNum;
             previousLayerNeurons = new List<Node>();
             weights = new List<double>();
@@ -79,6 +80,15 @@ namespace CSharpNeat
                     return true;
             }
             return false;
+        }
+        
+        public String toString()
+        {
+            String ret = "";
+
+            ret += "Node number: " + nodeNum + " Node type: " + nodeType + "\n";
+
+            return ret;
         }
     }
 

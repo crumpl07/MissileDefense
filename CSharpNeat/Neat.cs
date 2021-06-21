@@ -11,6 +11,9 @@ namespace CSharpNeat
         private int innovationCount;
         private List<Indiv> population;
         private Random rand = new Random();
+        
+        
+        internal List<Indiv> Population { get => population; set => population = value; }
 
         public Neat()
         {
@@ -28,7 +31,7 @@ namespace CSharpNeat
         public int sharingFunction(Indiv indiv, Indiv indiv1, double compatThresh)
         {
 
-            if (compareDistance(indiv, indiv1) > compatThresh)
+            if (compareDistance(indiv, indiv1) < compatThresh)
             {
                 return 1;
             }
@@ -49,7 +52,7 @@ namespace CSharpNeat
         public double[] returnRow(double[,] matrix, int row)
         {
             double[] temp = new double[matrix.GetLength(0)]; 
-            for(int i = 0; i < matrix.GetLength(0); i++)
+            for(int i = 0; i < matrix.GetLength(1); i++)
             {
                 temp[i] = matrix[row, i];
             }
@@ -57,30 +60,43 @@ namespace CSharpNeat
         }
 
         //computes the fitness of the given population
-        public void computeFitness(double[,] inputs, double[] expectedOutputs)
+        public void computeFitness(double[,] inputs, double[,] expectedOutputs)
         {
             for(int i = 0; i < population.Count; i++)
             {
-                double totalDiff = 0;
-                for(int j = 0; j < inputs.GetLength(1); j++)
-                {
-                    double[] temp = returnRow(inputs, j);
-                    List<double> outputs = population[i].feedForward(temp);
 
-                    for(int k = 0; k < expectedOutputs.Length; k++)
-                    {
-                        totalDiff += Math.Abs(outputs[i] - expectedOutputs[i]);
-                    }
-                    
-                }
-
+                double totalDiff = sumDifferenceOutputs(population[i], inputs, expectedOutputs);
                 population[i].Fitness = Math.Pow(expectedOutputs.Length - totalDiff,2);
             }
+            population.OrderBy(o => o.Fitness).ToList();
+        }
+
+        public double sumDifferenceOutputs(Indiv indiv, double[,] inputs, double[,] expectedOutputs)
+        {
+            double totalDiff = 0.0;
+            
+            for(int i = 0; i < inputs.GetLength(0); i++)
+            {
+                double[] temp = returnRow(inputs, i);
+                List<double> outputs = indiv.feedForward(temp);
+
+                for (int j = 0; j < expectedOutputs.GetLength(1); j++)
+                {
+
+                    //This is set to zero because that is the loc of the desired output vale
+                    //Console.WriteLine("expected out: " + expectedOutputs[i, j] + " Actual out: " + outputs[j]);
+                    //Console.WriteLine("i: " + i + " j: " + j);
+                    totalDiff += Math.Abs(outputs[j] - expectedOutputs[i,j]);
+                }
+            }
+
+            return totalDiff;
         }
 
         //adjusts the fitness of the population based on the equation from the paper
         public void adjustPopFit()
         {
+            
             for(int i = 0; i < population.Count; i++)
             {
                 population[i].Fitness = adjustedFitness(population[i], population, compatThresh);
@@ -89,24 +105,26 @@ namespace CSharpNeat
 
         //divides the population into species then mates
         //percentMating is the percentage of the population with the highest fitness that will pass their genes on
-        public void speciateMate(double percentMating)
+        public void speciateMate()
         {
+            int populationSize = population.Count;
             population.OrderBy(o => o.Fitness).ToList();
 
             List<Indiv> nextGen = new List<Indiv>();
 
-            int numParents = (int)(population.Count * percentMating + .50);
-
-            for(int i = population.Count - 1; i > population.Count - numParents; i--)
+            while (population.Count > 0)
             {
-                List<Indiv> species = speciesList(population[i], population);
-                species.OrderBy(o => o.Fitness).ToList();
-                int numSpeciesParents = (int)(species.Count * percentMating + 0.5);
-                for(int j = species.Count - 2; j > species.Count - numSpeciesParents; j--)
+                Indiv popHead = population[population.Count - 1];
+                List<Indiv> spec = speciesList(popHead, population);
+                population.Remove(popHead);
+
+                for (int i = 0; i < spec.Count; i++)
                 {
-                    nextGen.Add(crossOver(population[i], species[j]));
+                    nextGen.Add(crossOver(popHead,spec[i]));
+                    population.Remove(spec[i]);
                 }
             }
+            
 
             population = nextGen;
         }
@@ -116,9 +134,12 @@ namespace CSharpNeat
         {
             for(int i = 0; i < population.Count; i++)
             {
-                population[i].mutate(innovationCount);
+                if(rand.NextDouble() > .80)
+                {
+                    innovationCount = population[i].mutate(innovationCount);
+                }                
             }
-            innovationCount++;
+            
         }
             
         //returns a list of all of the individauls in the same species as the given indiv
@@ -156,11 +177,14 @@ namespace CSharpNeat
                 return length;
             }
             
-            while(parent1.Connections[index].InnovNum != parent2.Connections[index].InnovNum)
+            
+            
+            while (index < parent1.Connections.Count && index < parent2.Connections.Count && parent1.Connections[index].InnovNum != parent2.Connections[index].InnovNum)
             {
-                length++;
-                index++;
+                    length++;
+                    index++;
             }
+            
 
             return length;
 
@@ -179,8 +203,12 @@ namespace CSharpNeat
                 numInSpecies += sharingFunction(indiv, pop[i], compatThresh);
             }
 
+            pop.Add(indiv);
+
             double adjustedFit = indiv.Fitness / (double) numInSpecies;
             return adjustedFit;
+
+
         }
 
         public double compareDistance(Indiv indiv1, Indiv indiv2)
@@ -190,7 +218,10 @@ namespace CSharpNeat
             double numExcessGene = 0;
             double numDisjointGene = 0;
             double avgWeightDiff = 0;
-            double c1 = 1.0;//these are tuning variables. They let us change the size of the species and what charatiristics matter
+            
+            
+            //these are tuning variables. They let us change what charatiristics matter
+            double c1 = 1.0;
             double c2 = 1.0;
             double c3 = 1.0;
 
@@ -207,7 +238,7 @@ namespace CSharpNeat
             {
                 if(lengthOfdisjoint(indiv1, indiv2, i) + i == totalNumGene)
                 {
-                    numExcessGene = (double)lengthOfdisjoint(indiv1, indiv2, i);
+                    numExcessGene += (double)lengthOfdisjoint(indiv1, indiv2, i);
                     i = (int)totalNumGene;
                 }
                 else
@@ -229,10 +260,10 @@ namespace CSharpNeat
             }
             avgWeightDiff = totalweightDiff / (double)count;
 
-            Console.WriteLine("Excess Genes: " + numExcessGene);
-            Console.WriteLine("Disjoint Genes: " + numDisjointGene);
-            Console.WriteLine("Average Weight Difference: " + avgWeightDiff);
-            Console.WriteLine("Total Number of Genes: " + numExcessGene);
+            //Console.WriteLine("Excess Genes: " + numExcessGene);
+            //Console.WriteLine("Disjoint Genes: " + numDisjointGene);
+            //Console.WriteLine("Average Weight Difference: " + avgWeightDiff);
+            //Console.WriteLine("Total Number of Genes: " + numExcessGene);
 
 
             distance = (c1 * numExcessGene) / totalNumGene + (c2 * numDisjointGene) / totalNumGene + c3 * avgWeightDiff;
@@ -243,12 +274,14 @@ namespace CSharpNeat
 
         public Indiv crossOver(Indiv parent1, Indiv parent2)
         {
+            parent1.Connections.OrderBy(o => o.InnovNum).ToList();
+            parent2.Connections.OrderBy(o => o.InnovNum).ToList();
             int networkSize = 0;
-            Indiv temp = parent1;
+            Indiv child = new Indiv(parent1.NumInputNodes,parent2.NumOutputNodes);
             List<Connection> connections = new List<Connection>();
-            Indiv fitParent;
+            Indiv fitParent = parent1;
 
-            if (parent1.Fitness > parent2.Fitness)
+            if (parent1.Fitness >= parent2.Fitness)
             {
                 networkSize = parent1.Connections.Count;
                 fitParent = parent1;
@@ -258,37 +291,39 @@ namespace CSharpNeat
                 networkSize = parent2.Connections.Count;
                 fitParent = parent2;
             }
-            else
-            {
-                fitParent = parent1;
-            }
+            
 
             for (int i = 0; i < networkSize; i++)
             {
-                if (parent1.Connections[i].InnovNum == parent2.Connections[i].InnovNum)
+                if (lengthOfdisjoint(parent1, parent2,i) == 0)
                 {
                     if (rand.NextDouble() > .5)
                     {
+                        
                         connections.Add(parent1.Connections[i]);
                     }
                     else
                     {
+                        
                         connections.Add(parent2.Connections[i]);
                     }
                 }
-                if (parent1.Connections[i].InnovNum != parent2.Connections[i].InnovNum)
+                if (lengthOfdisjoint(parent1, parent2, i) > 0)
                 {
                     int disjointEnd = lengthOfdisjoint(parent1, parent2, i) + i;
-                    while(i < disjointEnd)
+                    //Console.WriteLine(disjointEnd);
+                    while(i < disjointEnd && i < networkSize)
                     {
+                        
                         connections.Add(fitParent.Connections[i]);
                         i++;
                     }
                 }
 
             }
-            temp.Connections = connections;
-            return temp;
+            
+            child.Connections = connections;
+            return child;
         }
 
     }

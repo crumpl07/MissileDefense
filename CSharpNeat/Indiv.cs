@@ -14,13 +14,13 @@ namespace CSharpNeat
         private int numOutputNodes; 
         private int numInputNodes;
         private double fitness;
-
+        
         //make new list of nodes everytime feed forward is called 
 
         public Indiv(int numInputNodes, int numOutputNodes)
         {
-            this.numInputNodes = numInputNodes;
-            this.numOutputNodes = numOutputNodes;
+            this.NumInputNodes = numInputNodes;
+            this.NumOutputNodes = numOutputNodes;
             connections = new List<Connection>();
             nodes = new List<Node>();
             Fitness = 0;
@@ -28,42 +28,40 @@ namespace CSharpNeat
             {
                 for (int j = 0; j < numOutputNodes; j++)
                 {
-                    Node temp1 = new Node(i);
-                    Node temp2 = new Node(j + numInputNodes);
-                    temp1.NodeType = NodeType.Sensor;
-                    temp2.NodeType = NodeType.Output;
+                    Node temp1 = new Node(i, NodeType.Sensor);
+                    Node temp2 = new Node(j + numInputNodes, NodeType.Output);
+                    
 
                     Connection temp = new Connection(temp1, temp2, 1.0, (i + j));
                     temp.IsEnabled = true;
-                    Console.WriteLine(temp.toString());
+                    //Console.WriteLine(temp.toString());
                     connections.Add(temp);
                     //idk how good of an idea this is but the innovation nums are just the initial position in the connections List
                 }
             }
             for (int i = 0; i < numInputNodes; i++)
             {
-                Node temp = new Node(i);
-                temp.NodeType = NodeType.Sensor;
+                Node temp = new Node(i, NodeType.Sensor);
                 nodes.Add(temp);
             }
             for (int i = 0; i < numOutputNodes; i++)
-            {
-                Node temp = new Node(numInputNodes + i);
-                temp.NodeType = NodeType.Output;
-                nodes.Add(temp);
+            {                
+                Node temp2 = new Node(numInputNodes + i, NodeType.Output);                
+                nodes.Add(temp2);
             }
         }
 
         internal List<Node> Nodes { get => nodes; set => nodes = value; }
         internal List<Connection> Connections { get => connections; set => connections = value; }
         public double Fitness { get => fitness; set => fitness = value; }
+        public int NumOutputNodes { get => numOutputNodes; set => numOutputNodes = value; }
+        public int NumInputNodes { get => numInputNodes; set => numInputNodes = value; }
 
         public List<double> feedForward(double[] inputs) // This method assumes the input nodes take up the first n elements of the above list
         {
 
             assembleNetwork();
             List<double> output = computeNetwork(inputs);
-            Console.WriteLine("You are now feeding forward");
             return output;
 
         }
@@ -77,8 +75,11 @@ namespace CSharpNeat
             {
                 if (nodes[i].NodeType == NodeType.Sensor)
                 {
+                    //Console.WriteLine(nodes[i].toString());
+                    //Console.WriteLine("i: " + i + " j: " + j);
 
                     nodes[i].Value = inputs[j];
+                   
 
                     j++;
                 }
@@ -103,22 +104,25 @@ namespace CSharpNeat
             return outputs;
         }
 
-        public void mutate(int innovNum)//uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuhhhh idk how often we want these mutations to occur
+        //need to disable connections between two nodes when a middle node is added
+        public int mutate(int innovNum)//uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuhhhh idk how often we want these mutations to occur
         {
             double mutType = rand.NextDouble();
 
             //selecting nodes to connect to
+
+            //this selection process is dum
             int inputNodeNumber = 0;
-            if(rand.NextDouble() > numInputNodes / nodes.Count)
+            if(rand.NextDouble() < NumInputNodes / nodes.Count)
             {
-                inputNodeNumber = rand.Next(0, numInputNodes - 1);
+                inputNodeNumber = rand.Next(0, NumInputNodes - 1);
             }
             else
             {
-                inputNodeNumber = rand.Next(numInputNodes + numOutputNodes, nodes.Count - 1);
+                inputNodeNumber = rand.Next(NumInputNodes + NumOutputNodes - 2, nodes.Count - 1);
             }
 
-            int outputNodeNumber = rand.Next(numInputNodes, nodes.Count - 1);
+            int outputNodeNumber = rand.Next(NumInputNodes, nodes.Count - 1);
 
 
             
@@ -130,13 +134,24 @@ namespace CSharpNeat
             if(mutType > .5)
             {
                 //add new node
-                Node temp = new Node(nodes.Count - 1);
+                Node temp = new Node(nodes.Count, NodeType.Hidden);
 
                 Connection temp1 = new Connection(inputNode, temp, rand.NextDouble(), innovNum);
-                Connection temp2 = new Connection(temp, outputNode, rand.NextDouble(), innovNum + 1);
+                innovNum++;
+                Connection temp2 = new Connection(temp, outputNode, rand.NextDouble(), innovNum);
+                innovNum++;
 
                 connections.Add(temp1);
                 connections.Add(temp2);
+
+                for(int i = 0; i < connections.Count; i++)
+                {
+                    if(connections[i].OutNode.NodeNum == outputNodeNumber && connections[i].InNode.NodeNum == inputNodeNumber)
+                    {
+                        connections[i].IsEnabled = false;
+                    }
+
+                }
 
 
             }
@@ -145,9 +160,11 @@ namespace CSharpNeat
                 //add new connection 
                 //this is the same thing as updating a weigth if it happens to an existing connection
 
-                Connection temp1 = new Connection(inputNode, outputNode, rand.NextDouble(), innovNum);
+                Connection temp1 = new Connection(inputNode, outputNode,  100 * rand.NextDouble(), innovNum);
                 connections.Add(temp1);
+                innovNum++;
             }
+            return innovNum;
         }
 
         public void assembleNetwork()
@@ -160,7 +177,7 @@ namespace CSharpNeat
 
             for (int i = 0; i < connections.Count; i++)
             {
-                Console.WriteLine(i + " " + nodes.Count + " " + connections[i].toString());
+                //Console.WriteLine(i + " " + nodes.Count + " " + connections[i].toString());
 
                 nodes.OrderBy(o => o.NodeNum).ToList();
                 //If both nodes exist
@@ -180,7 +197,7 @@ namespace CSharpNeat
                 //If only the input node exists 
                 if (!isInNetwork(connections[i].OutNode.NodeNum) && isInNetwork(connections[i].InNode.NodeNum))
                 {
-                    Node temp = new Node(connections[i].OutNode.NodeNum);
+                    Node temp = new Node(connections[i].OutNode.NodeNum, NodeType.Hidden);
 
                     temp.NodeType = connections[i].OutNode.NodeType;
 
@@ -193,7 +210,7 @@ namespace CSharpNeat
                 //If only the output node exists
                 if (isInNetwork(connections[i].OutNode.NodeNum) && !isInNetwork(connections[i].InNode.NodeNum))
                 {
-                    Node temp = new Node(connections[i].InNode.NodeNum);
+                    Node temp = new Node(connections[i].InNode.NodeNum, NodeType.Hidden);
                     temp.NodeType = connections[i].InNode.NodeType;
                     nodes.Add(temp);
                 }
@@ -201,8 +218,8 @@ namespace CSharpNeat
                 //If neither node exists
                 if (!isInNetwork(connections[i].OutNode.NodeNum) && !isInNetwork(connections[i].InNode.NodeNum))
                 {
-                    Node tempOutNode = new Node(connections[i].OutNode.NodeNum);
-                    Node tempInNode = new Node(connections[i].InNode.NodeNum);
+                    Node tempOutNode = new Node(connections[i].OutNode.NodeNum, NodeType.Hidden);
+                    Node tempInNode = new Node(connections[i].InNode.NodeNum, NodeType.Hidden);
 
                     tempOutNode.NodeType = connections[i].OutNode.NodeType;
                     tempInNode.NodeType = connections[i].InNode.NodeType;
@@ -243,6 +260,22 @@ namespace CSharpNeat
                     largest = connections[i].OutNode.NodeNum;
             }
             return largest;
+        }
+        
+        public String toString()
+        {
+            String ret = "";
+
+            for(int i = 0; i < connections.Count; i++)
+            {
+                ret += connections[i].toString() + "\n";
+            }
+            for(int i = 0; i < nodes.Count; i++)
+            {
+                ret += nodes[i].toString();
+            }
+
+            return ret;
         }
 
     }

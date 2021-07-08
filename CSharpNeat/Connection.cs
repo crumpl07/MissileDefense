@@ -6,8 +6,8 @@ namespace CSharpNeat
 {
     class Connection
     {
-        private Node inNode; // number determened by position in arraylist in indiv class
-        private Node outNode; // number determened by position in arraylist in indiv class
+        private Node inNode; 
+        private Node outNode; 
         private double weight;
         private bool isEnabled;
         private int innovNum;
@@ -19,6 +19,7 @@ namespace CSharpNeat
             this.outNode = outNode;
             this.weight = weight;
             this.innovNum = innovNum;
+            this.isEnabled = true;
         }
 
         public Node InNode { get => inNode; set => inNode = value; }
@@ -30,7 +31,7 @@ namespace CSharpNeat
 
         public string toString()
         {
-            return "In Node " + inNode.NodeNum + " Out Node " + outNode.NodeNum + " innov number: " + innovNum + "weight: " + weight;
+            return "In Node " + inNode.NodeNum + " Out Node " + outNode.NodeNum + " innov number: " + innovNum + " weight: " + weight ;
         }
     }
 }

@@ -28,6 +28,51 @@ namespace CSharpNeat
             population = new List<Indiv>();
         }
 
+        public double averageNumNodes()
+        {
+            double ret = 0.0;
+            int nodeSum = 0;
+
+            for (int i = 0; i < population.Count; i++)
+            {
+               nodeSum += population[i].Nodes.Count;
+            }
+
+            ret = (double)nodeSum / (double)population.Count;
+
+            return ret;
+        }
+
+        public double averageNumConnections()
+        {
+            double ret = 0.0;
+            int connectionSum = 0;
+
+            for (int i = 0; i < population.Count; i++)
+            {
+                connectionSum += population[i].Connections.Count;
+            }
+
+            ret = (double)connectionSum / (double)population.Count;
+
+            return ret;
+        }
+
+        public double averageFitness()
+        {
+            double ret = 0.0;
+            double fitnessSum = 0;
+
+            for (int i = 0; i < population.Count; i++)
+            {
+                fitnessSum += population[i].Fitness;
+            }
+
+            ret = fitnessSum / (double)population.Count;
+
+            return ret;
+        }
+
         public int sharingFunction(Indiv indiv, Indiv indiv1, double compatThresh)
         {
 
@@ -67,8 +112,9 @@ namespace CSharpNeat
 
                 double totalDiff = sumDifferenceOutputs(population[i], inputs, expectedOutputs);
                 population[i].Fitness = Math.Pow(expectedOutputs.Length - totalDiff,2);
+                //Console.WriteLine(population[i].Fitness);
             }
-            population.OrderBy(o => o.Fitness).ToList();
+            population = population.OrderBy(o => o.Fitness).ToList();
         }
 
         public double sumDifferenceOutputs(Indiv indiv, double[,] inputs, double[,] expectedOutputs)
@@ -86,7 +132,10 @@ namespace CSharpNeat
                     //This is set to zero because that is the loc of the desired output vale
                     //Console.WriteLine("expected out: " + expectedOutputs[i, j] + " Actual out: " + outputs[j]);
                     //Console.WriteLine("i: " + i + " j: " + j);
+                    
                     totalDiff += Math.Abs(outputs[j] - expectedOutputs[i,j]);
+                    //Console.WriteLine("output: " + outputs[j] + " expected output: " + expectedOutputs[i, j]);
+                    //Console.WriteLine(totalDiff);
                 }
             }
 
@@ -108,7 +157,7 @@ namespace CSharpNeat
         public void speciateMate()
         {
             int populationSize = population.Count;
-            population.OrderBy(o => o.Fitness).ToList();
+            population = population.OrderBy(o => o.Fitness).ToList();
 
             List<Indiv> nextGen = new List<Indiv>();
 
@@ -132,9 +181,10 @@ namespace CSharpNeat
         //mutates the popluation and increments the innovation count
         public void mutatePop()
         {
+            double mutationProbability = .8;
             for(int i = 0; i < population.Count; i++)
             {
-                if(rand.NextDouble() > .80)
+                if(rand.NextDouble() > mutationProbability)
                 {
                     innovationCount = population[i].mutate(innovationCount);
                 }                
@@ -156,33 +206,46 @@ namespace CSharpNeat
             return ret;
         }
 
+
+        //Returns the length of the disjoint including the specified index 
+        //lengthOfDisjoint returning a 0 means the innovnums at the specified index are the same
         public int lengthOfdisjoint(Indiv parent1, Indiv parent2, int index)
         {
             int length = 0;
-            int longParent = 0;
-            int shortParent = 0;
+            Indiv longParent;
+            Indiv shortParent;
             if(parent1.Connections.Count > parent2.Connections.Count)
             {
-                longParent = parent1.Connections.Count;
-                shortParent = parent2.Connections.Count;
+                longParent = parent1;
+                shortParent = parent2;
             }
             else
             {
-                longParent = parent2.Connections.Count;
-                shortParent = parent1.Connections.Count;
-            }
-            if(index >= shortParent && index <= longParent)
-            {
-                length = longParent - shortParent;
-                return length;
+                longParent = parent2;
+                shortParent = parent1;
             }
             
+            //Console.WriteLine("length of the longer Parent: " + longParent.Connections.Count + " length of the shorter parent: " + shortParent.Connections.Count);
             
             
-            while (index < parent1.Connections.Count && index < parent2.Connections.Count && parent1.Connections[index].InnovNum != parent2.Connections[index].InnovNum)
+            for(int i = index; i < longParent.Connections.Count; i++)
             {
-                    length++;
-                    index++;
+                if(i >= shortParent.Connections.Count)
+                {
+                    length += longParent.Connections.Count - shortParent.Connections.Count;
+                    return length;
+                }
+                else
+                {
+                    if(longParent.Connections[i].InnovNum != shortParent.Connections[i].InnovNum)
+                    {
+                        length++;
+                    }
+                    else
+                    {
+                        return length;
+                    }
+                }
             }
             
 
@@ -202,6 +265,7 @@ namespace CSharpNeat
             {
                 numInSpecies += sharingFunction(indiv, pop[i], compatThresh);
             }
+            //Console.WriteLine(numInSpecies);
 
             pop.Add(indiv);
 
@@ -211,6 +275,8 @@ namespace CSharpNeat
 
         }
 
+
+        //smaller number means the indivs are more closely related
         public double compareDistance(Indiv indiv1, Indiv indiv2)
         {
             double distance = 0;
@@ -221,9 +287,9 @@ namespace CSharpNeat
             
             
             //these are tuning variables. They let us change what charatiristics matter
-            double c1 = 1.0;
+            double c1 = 10.0;
             double c2 = 1.0;
-            double c3 = 1.0;
+            double c3 = 3.0;
 
             if(indiv1.Connections.Count > indiv2.Connections.Count)
             {
@@ -247,7 +313,7 @@ namespace CSharpNeat
                 }
                 
             }
-            int count = 1;
+            int count = 0;
             double totalweightDiff = 0;
 
             for(int i = 0; i < indiv1.Connections.Count; i++)
@@ -272,14 +338,15 @@ namespace CSharpNeat
 
         }
 
+        //this funciton is killing the node list
         public Indiv crossOver(Indiv parent1, Indiv parent2)
         {
-            parent1.Connections.OrderBy(o => o.InnovNum).ToList();
-            parent2.Connections.OrderBy(o => o.InnovNum).ToList();
             int networkSize = 0;
             Indiv child = new Indiv(parent1.NumInputNodes,parent2.NumOutputNodes);
             List<Connection> connections = new List<Connection>();
+            List<Node> nodes = new List<Node>();
             Indiv fitParent = parent1;
+            
 
             if (parent1.Fitness >= parent2.Fitness)
             {
@@ -298,13 +365,11 @@ namespace CSharpNeat
                 if (lengthOfdisjoint(parent1, parent2,i) == 0)
                 {
                     if (rand.NextDouble() > .5)
-                    {
-                        
+                    {                       
                         connections.Add(parent1.Connections[i]);
                     }
                     else
                     {
-                        
                         connections.Add(parent2.Connections[i]);
                     }
                 }
@@ -314,16 +379,40 @@ namespace CSharpNeat
                     //Console.WriteLine(disjointEnd);
                     while(i < disjointEnd && i < networkSize)
                     {
-                        
                         connections.Add(fitParent.Connections[i]);
-                        i++;
+                        i++;   
                     }
                 }
 
             }
+
+            for(int i = 0; i < connections.Count; i++)
+            {
+                if (!isInNetwork(nodes, connections[i].InNode))
+                {
+                    nodes.Add(fitParent.Nodes[fitParent.indexOfNode(connections[i].InNode)]);
+                }
+                if (!isInNetwork(nodes, connections[i].OutNode))
+                {
+                    nodes.Add(fitParent.Nodes[fitParent.indexOfNode(connections[i].OutNode)]);
+                }
+            }
             
+
             child.Connections = connections;
+            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
+            child.Nodes = nodes;
             return child;
+        }
+
+        public Boolean isInNetwork(List<Node> nodes, Node nodeNum)
+        {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].NodeNum == nodeNum.NodeNum)
+                    return true;
+            }
+            return false;
         }
 
     }

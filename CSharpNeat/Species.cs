@@ -11,18 +11,22 @@ namespace CSharpNeat
         private List<Indiv> members;
         private double totalfitness;
         double c1 = 1; //These coefficients are gonna have to be played with until we get something that feels right.
-        double c2 = 1;
+        double c2 = 0.25;
         double c3 = 1;
         public Species(Indiv rep, double sizeImportance, double structureImportance, double weightImportance) {
             representative = rep;
             c1 = sizeImportance;
             c2 = structureImportance;
             c3 = weightImportance;
+            members = new List<Indiv>();
+            members.Add(rep);
         }
 
         public Species(Indiv rep)
         {
             representative = rep;
+            members = new List<Indiv>();
+            members.Add(rep);
         }
         
         public void calcFitness()

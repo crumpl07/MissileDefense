@@ -99,7 +99,7 @@ namespace CSharpNeat
 
         public List<double> computeNetwork(double[] inputs)
         {
-            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
+            
             List<double> outputs = new List<double>();
 
             for(int i = 0; i < numInputNodes; i++)
@@ -154,6 +154,18 @@ namespace CSharpNeat
             nodes = nodes.OrderBy(o => o.NodeNum).ToList();
         }
 
+        public int indexOfConnection(int outputNodeNumber, int inputNodeNumber)
+        {
+            for(int i = 0; i < connections.Count; i++)
+            {
+                if(connections[i].OutNode.NodeNum == outputNodeNumber && connections[i].InNode.NodeNum == inputNodeNumber)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         //need to disable connections between two nodes when a middle node is added
         public int mutate(int innovNum)
         {
@@ -182,21 +194,16 @@ namespace CSharpNeat
 
             outputNodeNumber = rand.Next(NumInputNodes, nodes.Count);
 
-
-
-
-
-
-
             //connecting the nodes either with a new node or with a regular connection 
             if (rand.NextDouble() > sameNumNodesProb)
             {
+                //add new node
                 Node temp = new Node(nodes.Count, NodeType.Hidden);
                 nodes.Add(temp);
 
-                Connection temp1 = new Connection(nodes[inputNodeNumber], temp, (0.5 - rand.NextDouble())*2, innovNum);
+                Connection temp1 = new Connection(nodes[inputNodeNumber], temp, 1, innovNum);
                 innovNum++;
-                Connection temp2 = new Connection(temp, nodes[outputNodeNumber], (0.5 - rand.NextDouble())*2, innovNum);
+                Connection temp2 = new Connection(temp, nodes[outputNodeNumber], connections[indexOfConnection(outputNodeNumber, inputNodeNumber)].Weight, innovNum);
                 innovNum++;
 
                 
@@ -204,16 +211,8 @@ namespace CSharpNeat
                 connections.Add(temp2);
                   
                 //disabling the connection
-                for(int i = 0; i < connections.Count; i++)
-                {
-                    if(connections[i].OutNode.NodeNum == outputNodeNumber && connections[i].InNode.NodeNum == inputNodeNumber)
-                    {
-                        connections[i].IsEnabled = false;
-                    }
+                connections[indexOfConnection(outputNodeNumber,inputNodeNumber)].IsEnabled = false;
 
-                }
-
-                
 
             }
             else

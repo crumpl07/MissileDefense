@@ -18,7 +18,7 @@ namespace CSharpNeat
         public Neat()
         {
             innovationCount = 0;
-            compatThresh = 0.25;
+            compatThresh = 0.05;
             population = new List<Indiv>();
         }
         public Neat(double compatThresh)
@@ -152,20 +152,32 @@ namespace CSharpNeat
             }
         }
 
+        public List<Indiv> removeList(List<Indiv> pop,List<Indiv> remove)
+        {
+            for(int i = 0; i < remove.Count(); i++)
+            {
+                pop.Remove(remove[i]);
+            }
+            return pop;
+        }
+
         //divides the population into species then mates
         //percentMating is the percentage of the population with the highest fitness that will pass their genes on
+        //this eleminates all but the best species
         public void speciateMate()
         {
             int populationSize = population.Count;
             population = population.OrderBy(o => o.Fitness).ToList();
-
             List<Indiv> nextGen = new List<Indiv>();
 
             while (population.Count > 0)
             {
                 Indiv popHead = population[population.Count - 1];
                 List<Indiv> spec = speciesList(popHead, population);
+                
                 population.Remove(popHead);
+                population = removeList(population, spec);
+              
 
                 for (int i = 0; i < spec.Count; i++)
                 {
@@ -181,7 +193,7 @@ namespace CSharpNeat
         //mutates the popluation and increments the innovation count
         public void mutatePop()
         {
-            double mutationProbability = .8;
+            double mutationProbability = .6;
             for(int i = 0; i < population.Count; i++)
             {
                 if(rand.NextDouble() > mutationProbability)
@@ -255,8 +267,8 @@ namespace CSharpNeat
 
         public double adjustedFitness(Indiv indiv, List<Indiv> pop, double compatThresh)
         {
-            
 
+            double fitnessCoeff = 1.0;
             int numInSpecies = 0;
 
             pop.Remove(indiv);
@@ -269,7 +281,7 @@ namespace CSharpNeat
 
             pop.Add(indiv);
 
-            double adjustedFit = indiv.Fitness / (double) numInSpecies;
+            double adjustedFit = (indiv.Fitness / ((double) numInSpecies)) * fitnessCoeff;
             return adjustedFit;
 
 
@@ -338,7 +350,7 @@ namespace CSharpNeat
 
         }
 
-        //this funciton is killing the node list
+        
         public Indiv crossOver(Indiv parent1, Indiv parent2)
         {
             int networkSize = 0;

@@ -64,28 +64,39 @@ namespace CSharpNeat
 
             */
 
-            /*
+            
 
             //testing the assemble network and feed forward
 
+           
+            /*
             Node midNode = new Node(3, NodeType.Hidden);
             Connection c1 = new Connection(indiv.Nodes[0], midNode,1,2);
-            Connection c2 = new Connection(midNode, indiv.Nodes[2], 1, 3);
+            Connection c2 = new Connection(indiv.Nodes[1], midNode, 1, 2);
+            Connection c3 = new Connection(midNode, indiv.Nodes[2], 1, 3);
+            indiv.Connections[0].Weight = 1;
+            indiv.Connections[1].Weight = 1;
+
 
             indiv.Connections.Add(c1);
             indiv.Connections.Add(c2);
+            indiv.Connections.Add(c3);
+            indiv.Connections.RemoveAt(0);
+            indiv.Connections.RemoveAt(0);
             indiv.Nodes.Add(midNode);
                   
-            indiv.Connections[0].Weight = 1;
-            indiv.Connections[1].Weight = 1;
+            indiv.Connections[indiv.Connections.Count - 2].Weight = 1;
+            indiv.Connections[indiv.Connections.Count - 1].Weight = 1;
             Console.WriteLine(indiv.toString());
 
-            Console.WriteLine(indiv.feedForward(test)[0]);
+            Console.WriteLine("Input: " + test[0] + "," + test[1]);
 
-            //Console.WriteLine(indiv.Nodes[2].inputsToString());
+            Console.WriteLine("Network output: " + indiv.feedForward(test)[0]);
 
+            Console.WriteLine(indiv.Nodes[2].inputsToString());
+
+            
             */
-
 
             /*
             for (int i = 0; i < 10; i++)
@@ -125,7 +136,7 @@ namespace CSharpNeat
 
             //Console.WriteLine(indiv.toString());
 
-            
+
             neat.initializePop(100, 2, 1);
             double[,] inputs = { 
                 {0,0},
@@ -141,10 +152,10 @@ namespace CSharpNeat
             };
 
             neat.computeFitness(inputs, expectedOutput);
-            
 
-            
 
+
+            Indiv daBest;
             
             
            
@@ -160,25 +171,28 @@ namespace CSharpNeat
 
                 neat.computeFitness(inputs, expectedOutput);
                 neat.Population = neat.Population.OrderBy(o => o.Fitness).ToList();
-                Indiv daBest = neat.Population[neat.Population.Count - 1];
+                daBest = neat.Population[neat.Population.Count - 1];
                 Indiv daWorst = neat.Population[0];
                 daBest.assembleNetwork();
                 Console.WriteLine("Generation: " + i);
                 Console.WriteLine("Average Number of Nodes: " + neat.averageNumNodes());
                 Console.WriteLine("Average Number of Connections: " + neat.averageNumConnections());
                 Console.WriteLine("Average Fitness: " + neat.averageFitness());
+                Console.WriteLine();
                 Console.WriteLine(daBest.toString());
                 //Console.WriteLine(neat.sumDifferenceOutputs(daBest, inputs, expectedOutput));
                 Console.WriteLine(daBest.Fitness);
 
-                Console.WriteLine(daWorst.toString());
-                Console.WriteLine(daWorst.Fitness);
-            }
-
-            
-
-
-
+                Console.WriteLine("inputs: 0 ,0 output: " + daBest.computeNetwork(neat.returnRow(inputs, 0))[0]);
+                Console.WriteLine("inputs: 0 ,1 output: " + daBest.computeNetwork(neat.returnRow(inputs, 1))[0]);
+                Console.WriteLine("inputs: 1 ,0 output: " + daBest.computeNetwork(neat.returnRow(inputs, 2))[0]);
+                Console.WriteLine("inputs: 1 ,1 output: " + daBest.computeNetwork(neat.returnRow(inputs, 3))[0]);
+                Console.WriteLine();
+                //Console.WriteLine(daWorst.toString());
+                //Console.WriteLine(daWorst.Fitness);
+           }
+           
+          
 
         }
     }

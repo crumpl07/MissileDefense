@@ -79,7 +79,7 @@ namespace CSharpNeat
 
             for(int i = 0; i < previousLayerNeurons.Count; i++)
             {
-                ret += "input node number: " + previousLayerNeurons[i].NodeNum + " Node weight " + weights[i] + " \n";
+                ret += "input node number: " + previousLayerNeurons[i].NodeNum + " Node weight: " + weights[i] + " \n";
             }
             return ret;
         }

@@ -20,6 +20,7 @@ namespace CSharpNeat
             this.weight = weight;
             this.innovNum = innovNum;
             this.isEnabled = true;
+
         }
 
         public Node InNode { get => inNode; set => inNode = value; }

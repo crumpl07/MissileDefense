@@ -8,9 +8,11 @@ namespace CSharpNeat
     {
         private List<double> weights;
         private List<Node> previousLayerNeurons;
+        private List<Node> nextLayerNeurons;
         private double value;
         private NodeType nodeType;
         private int nodeNum;
+        private int nodeRank;
 
         public Node(int nodeNum, NodeType nodeType)
         {
@@ -33,9 +35,15 @@ namespace CSharpNeat
         internal NodeType NodeType { get => nodeType; set => nodeType = value; }
         public double Value { get => value; set => this.value = value; }
         internal List<Node> PreviousLayerNeurons { get => previousLayerNeurons; set => previousLayerNeurons = value; }
+        internal List<Node> NextLayerNeurons { get => nextLayerNeurons; set => nextLayerNeurons = value; }
+        public int NodeRank { get => nodeRank; set => nodeRank = value; }
 
         public double commputeValue()
         {
+            if(nodeType == NodeType.Sensor)
+            {
+                return value;
+            }
             double sum = 0;
 
             for (int i = 0; i < PreviousLayerNeurons.Count; i++)
@@ -91,6 +99,11 @@ namespace CSharpNeat
             ret += "Node number: " + nodeNum + " Node type: " + nodeType + "\n";
 
             return ret;
+        }
+
+        public Boolean hasConnections()
+        {
+            return previousLayerNeurons.Count == 0 && nextLayerNeurons.Count == 0;
         }
     }
 

@@ -8,24 +8,29 @@ namespace CSharpNeat
     class Neat
     {
         private double compatThresh;
-        private int innovationCount;
+        private List<Species> species;
         private List<Indiv> population;
         private Random rand = new Random();
-        
+        private int innovationCount;
         
         internal List<Indiv> Population { get => population; set => population = value; }
 
         public Neat()
         {
-            innovationCount = 0;
-            compatThresh = 0.05;
+            
+            compatThresh = 3;
             population = new List<Indiv>();
+           
+            innovationCount = 0;
+            species = new List<Species>();
         }
         public Neat(double compatThresh)
         {
-            innovationCount = 0;
+            
             this.compatThresh = compatThresh;
             population = new List<Indiv>();
+            innovationCount = 0;
+            species = new List<Species>();
         }
 
         public double averageNumNodes()
@@ -73,14 +78,13 @@ namespace CSharpNeat
             return ret;
         }
 
-        public int sharingFunction(Indiv indiv, Indiv indiv1, double compatThresh)
+        public int sharingFunction(Indiv indiv, Indiv indiv1)
         {
 
             if (compareDistance(indiv, indiv1) < compatThresh)
             {
                 return 1;
             }
-
             return 0;
 
         }
@@ -92,6 +96,8 @@ namespace CSharpNeat
             {
                 population.Add(new Indiv(numInputNodes, numOutputNodes));
             }
+
+            innovationCount = numInputNodes * numInputNodes;
         }
 
         public double[] returnRow(double[,] matrix, int row)
@@ -116,7 +122,7 @@ namespace CSharpNeat
             }
             population = population.OrderBy(o => o.Fitness).ToList();
         }
-
+   
         public double sumDifferenceOutputs(Indiv indiv, double[,] inputs, double[,] expectedOutputs)
         {
             double totalDiff = 0.0;
@@ -124,7 +130,8 @@ namespace CSharpNeat
             for(int i = 0; i < inputs.GetLength(0); i++)
             {
                 double[] temp = returnRow(inputs, i);
-                List<double> outputs = indiv.feedForward(temp);
+                Network net = new Network(indiv);
+                double[] outputs = net.computeNetwork(temp);
 
                 for (int j = 0; j < expectedOutputs.GetLength(1); j++)
                 {
@@ -166,42 +173,16 @@ namespace CSharpNeat
         //this eleminates all but the best species
         public void speciateMate()
         {
-            int populationSize = population.Count;
-            population = population.OrderBy(o => o.Fitness).ToList();
-            List<Indiv> nextGen = new List<Indiv>();
 
-            while (population.Count > 0)
-            {
-                Indiv popHead = population[population.Count - 1];
-                List<Indiv> spec = speciesList(popHead, population);
-                
-                population.Remove(popHead);
-                population = removeList(population, spec);
-              
-
-                for (int i = 0; i < spec.Count; i++)
-                {
-                    nextGen.Add(crossOver(popHead,spec[i]));
-                    population.Remove(spec[i]);
-                }
-            }
-            
-
-            population = nextGen;
         }
 
         //mutates the popluation and increments the innovation count
         public void mutatePop()
         {
-            double mutationProbability = .6;
-            for(int i = 0; i < population.Count; i++)
+            foreach(Indiv i in population)
             {
-                if(rand.NextDouble() > mutationProbability)
-                {
-                    innovationCount = population[i].mutate(innovationCount);
-                }                
-            }
-            
+                innovationCount = i.mutate(innovationCount);
+            }            
         }
             
         //returns a list of all of the individauls in the same species as the given indiv
@@ -210,14 +191,13 @@ namespace CSharpNeat
             List<Indiv> ret = new List<Indiv>();
             for(int i = 0; i < population.Count; i++)
             {
-                if(sharingFunction(speciesExample,population[i],compatThresh) == 1)
-                {
+                if(sharingFunction(speciesExample,population[i]) == 1)
+                {                    
                     ret.Add(population[i]);
                 }
             }
             return ret;
         }
-
 
         //Returns the length of the disjoint including the specified index 
         //lengthOfDisjoint returning a 0 means the innovnums at the specified index are the same
@@ -267,7 +247,6 @@ namespace CSharpNeat
 
         public double adjustedFitness(Indiv indiv, List<Indiv> pop, double compatThresh)
         {
-
             double fitnessCoeff = 1.0;
             int numInSpecies = 0;
 
@@ -275,7 +254,7 @@ namespace CSharpNeat
 
             for(int i = 0; i < pop.Count; i++)
             {
-                numInSpecies += sharingFunction(indiv, pop[i], compatThresh);
+                numInSpecies += sharingFunction(indiv, pop[i]);
             }
             //Console.WriteLine(numInSpecies);
 
@@ -284,9 +263,7 @@ namespace CSharpNeat
             double adjustedFit = (indiv.Fitness / ((double) numInSpecies)) * fitnessCoeff;
             return adjustedFit;
 
-
         }
-
 
         //smaller number means the indivs are more closely related
         public double compareDistance(Indiv indiv1, Indiv indiv2)
@@ -345,12 +322,13 @@ namespace CSharpNeat
 
 
             distance = (c1 * numExcessGene) / totalNumGene + (c2 * numDisjointGene) / totalNumGene + c3 * avgWeightDiff;
-            
+
+            //Console.WriteLine("Distance between the given indivs: " + distance);
+
             return distance;
 
         }
 
-        
         public Indiv crossOver(Indiv parent1, Indiv parent2)
         {
             int networkSize = 0;

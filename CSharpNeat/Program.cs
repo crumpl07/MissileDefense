@@ -4,21 +4,93 @@ using System.Linq;
 
 namespace CSharpNeat
 {
+
+
+
+    /*
+     * 
+     * 
+     * 
+     * make a species class with a representer genome and then all the members of the species 
+     * 
+     * maybe move the mutation stuff into the species 
+     * 
+     * maybe also move the network eval into the species 
+     * 
+     * give neat class a species list
+     * 
+     * 
+     * 
+     * 
+     */
     class Program
     {
         static void Main(string[] args)
         {
-            Neat neat = new Neat();
-            Indiv indiv = new Indiv(2, 1);
+            /* testing new network module
+            Node sense1 = new Node();
+            sense1.NodeNum = 0;
+            Node sense2 = new Node();
+            sense2.NodeNum = 1;
+            sense1.NodeType = NodeType.Sensor;
+            sense2.NodeType = NodeType.Sensor;
+            Node hidden1 = new Node();
+            hidden1.NodeNum = 2;
+            Node hidden2 = new Node();
+            hidden2.NodeNum = 3;
+            Node hidden3 = new Node();
+            hidden3.NodeNum = 4;
+            Node hidden4 = new Node();
+            hidden4.NodeNum = 5;
+            hidden1.NodeType = NodeType.Hidden;
+            hidden2.NodeType = NodeType.Hidden;
+            hidden3.NodeType = NodeType.Hidden;
+            hidden4.NodeType = NodeType.Hidden;
+            Node output1 = new Node();
+            output1.NodeNum = 6;
+            output1.NodeType = NodeType.Output;
 
-            Indiv indiv1 = new Indiv(2, 1);
+            output1.PreviousLayerNeurons.Add(hidden4);
+            output1.Weights.Add(1);
+            hidden4.PreviousLayerNeurons.Add(hidden3);
+            hidden4.Weights.Add(1);
+            hidden3.PreviousLayerNeurons.Add(hidden2);
+            hidden3.Weights.Add(1);
+            hidden2.PreviousLayerNeurons.Add(hidden1);
+            hidden2.Weights.Add(1);
+            hidden1.PreviousLayerNeurons.Add(sense1);
+            hidden1.Weights.Add(1);
+            hidden2.PreviousLayerNeurons.Add(sense1);
+            hidden2.Weights.Add(1);
 
-            double[] test = { 0, 0 };
-
+            Network network = new Network();
+            network.Nodes.Add(output1);
+            network.Nodes.Add(hidden1);
+            network.Nodes.Add(hidden2);
+            network.Nodes.Add(hidden3);
+            network.Nodes.Add(hidden4);
+            network.Nodes.Add(sense1);
+            network.Nodes.Add(sense2);
 
             
-            
-            
+
+            //testing distance from sensor
+            Console.WriteLine(network.distanceFromSensor(output1));
+
+            double[] inputs = new double[2];
+            inputs[0] = 1;
+            inputs[1] = 1;
+
+            Console.WriteLine(network.computeNetwork(inputs)[0]);
+
+            Node test = new Node();
+            test.Value = 100;
+            */
+
+
+
+
+
             /*
             //Testing lengthOfDisjoint() fuction
 
@@ -64,40 +136,6 @@ namespace CSharpNeat
 
             */
 
-            
-
-            //testing the assemble network and feed forward
-
-           
-            /*
-            Node midNode = new Node(3, NodeType.Hidden);
-            Connection c1 = new Connection(indiv.Nodes[0], midNode,1,2);
-            Connection c2 = new Connection(indiv.Nodes[1], midNode, 1, 2);
-            Connection c3 = new Connection(midNode, indiv.Nodes[2], 1, 3);
-            indiv.Connections[0].Weight = 1;
-            indiv.Connections[1].Weight = 1;
-
-
-            indiv.Connections.Add(c1);
-            indiv.Connections.Add(c2);
-            indiv.Connections.Add(c3);
-            indiv.Connections.RemoveAt(0);
-            indiv.Connections.RemoveAt(0);
-            indiv.Nodes.Add(midNode);
-                  
-            indiv.Connections[indiv.Connections.Count - 2].Weight = 1;
-            indiv.Connections[indiv.Connections.Count - 1].Weight = 1;
-            Console.WriteLine(indiv.toString());
-
-            Console.WriteLine("Input: " + test[0] + "," + test[1]);
-
-            Console.WriteLine("Network output: " + indiv.feedForward(test)[0]);
-
-            Console.WriteLine(indiv.Nodes[2].inputsToString());
-
-            
-            */
-
             /*
             for (int i = 0; i < 10; i++)
             {
@@ -136,7 +174,8 @@ namespace CSharpNeat
 
             //Console.WriteLine(indiv.toString());
 
-
+            Neat neat = new Neat();
+           
             neat.initializePop(100, 2, 1);
             double[,] inputs = { 
                 {0,0},
@@ -151,7 +190,7 @@ namespace CSharpNeat
                 { 0 } 
             };
 
-            neat.computeFitness(inputs, expectedOutput);
+            //neat.computeFitness(inputs, expectedOutput);
 
 
 
@@ -162,35 +201,32 @@ namespace CSharpNeat
            for(int i = 0; i < 50; i++)
            {
                 neat.computeFitness(inputs, expectedOutput);
-                
                 neat.adjustPopFit();
-               
+                
                 neat.speciateMate();
                 
                 neat.mutatePop();
-
                 neat.computeFitness(inputs, expectedOutput);
                 neat.Population = neat.Population.OrderBy(o => o.Fitness).ToList();
-                daBest = neat.Population[neat.Population.Count - 1];
-                Indiv daWorst = neat.Population[0];
-                daBest.assembleNetwork();
+                //daBest = neat.Population[neat.Population.Count - 1];
+                //Console.WriteLine(neat.Population.Count - 1);
+                //Indiv daWorst = neat.Population[0];
+                
                 Console.WriteLine("Generation: " + i);
                 Console.WriteLine("Average Number of Nodes: " + neat.averageNumNodes());
                 Console.WriteLine("Average Number of Connections: " + neat.averageNumConnections());
                 Console.WriteLine("Average Fitness: " + neat.averageFitness());
                 Console.WriteLine();
-                Console.WriteLine(daBest.toString());
+                //Console.WriteLine(daBest.toString());
                 //Console.WriteLine(neat.sumDifferenceOutputs(daBest, inputs, expectedOutput));
-                Console.WriteLine(daBest.Fitness);
+                //Console.WriteLine(daBest.Fitness);
 
-                Console.WriteLine("inputs: 0 ,0 output: " + daBest.computeNetwork(neat.returnRow(inputs, 0))[0]);
-                Console.WriteLine("inputs: 0 ,1 output: " + daBest.computeNetwork(neat.returnRow(inputs, 1))[0]);
-                Console.WriteLine("inputs: 1 ,0 output: " + daBest.computeNetwork(neat.returnRow(inputs, 2))[0]);
-                Console.WriteLine("inputs: 1 ,1 output: " + daBest.computeNetwork(neat.returnRow(inputs, 3))[0]);
+                
                 Console.WriteLine();
                 //Console.WriteLine(daWorst.toString());
                 //Console.WriteLine(daWorst.Fitness);
            }
+
            
           
 

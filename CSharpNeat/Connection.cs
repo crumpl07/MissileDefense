@@ -34,5 +34,10 @@ namespace CSharpNeat
         {
             return "In Node " + inNode.NodeNum + " Out Node " + outNode.NodeNum + " innov number: " + innovNum + " weight: " + weight ;
         }
+
+        public Boolean equals(Connection c)
+        {
+            return (c.InNode.NodeNum == this.inNode.NodeNum && c.OutNode.NodeNum == this.OutNode.NodeNum);
+        }
     }
 }

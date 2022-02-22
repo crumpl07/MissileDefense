@@ -14,8 +14,6 @@ namespace CSharpNeat
         private int numInputNodes;
         private double fitness;
         
-        //make new list of nodes everytime feed forward is called 
-
         public Indiv(int numInputNodes, int numOutputNodes)
         {
             this.NumInputNodes = numInputNodes;
@@ -34,15 +32,18 @@ namespace CSharpNeat
                 Node temp = new Node(i + numInputNodes,NodeType.Output);
                 nodes.Add(temp);
             }
-            
-            for(int i = 0; i < numInputNodes; i++)
+
+            int innovcount = 0;
+            for (int i = 0;i < numInputNodes; i++)
             {
                 for(int j = 0; j < numOutputNodes; j++)
                 {
-                    Connection temp = new Connection(nodes[i], nodes[numInputNodes + j], 0.5 - rand.NextDouble(), i + j);
-                    connections.Add(temp);
+                    connections.Add(new Connection(nodes[i], nodes[numInputNodes + j], rand.NextDouble(), innovcount));
+                    innovcount++;
                 }
             }
+            //Console.WriteLine("after all the connections inlitilized" + innovcount);
+           
         }
 
         internal List<Node> Nodes { get => nodes; set => nodes = value; }
@@ -50,41 +51,6 @@ namespace CSharpNeat
         public double Fitness { get => fitness; set => fitness = value; }
         public int NumOutputNodes { get => numOutputNodes; set => numOutputNodes = value; }
         public int NumInputNodes { get => numInputNodes; set => numInputNodes = value; }
-
-        public List<double> feedForward(double[] inputs) // This method assumes the input nodes take up the first n elements of the above list
-        {
-            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
-            assembleNetwork();
-            List<double> output = computeNetwork(inputs);
-            return output;
-
-        }
-
-        public List<Node> nodeOrder()
-        {
-            List<Node> ret = new List<Node>();
-            for(int i = 0; i < connections.Count; i++)
-            {
-                if(connections[i].InNode.NodeType == NodeType.Hidden && indexOf(ret,connections[i].InNode) < 0)
-                {
-                    int index = indexOf(ret, connections[i].OutNode);
-                    if (index > 0)
-                    {
-                        ret.Insert(index - 1, nodes[indexOfNode(connections[i].InNode)]);
-                    }
-                    else if(index < 0 && connections[i].OutNode.NodeType != NodeType.Output)
-                    {
-                        ret.Add(nodes[indexOfNode(connections[i].InNode)]);
-                        ret.Add(nodes[indexOfNode(connections[i].OutNode)]);
-                    }
-                    else
-                    {
-                        ret.Add(nodes[indexOfNode(connections[i].InNode)]);
-                    }
-                }
-            }
-            return ret;
-        }
 
         public int indexOf(List<Node> list, Node node)
         {
@@ -95,63 +61,6 @@ namespace CSharpNeat
                     index = i;
             }
             return index;
-        }
-
-        public List<double> computeNetwork(double[] inputs)
-        {
-            
-            List<double> outputs = new List<double>();
-
-            for(int i = 0; i < numInputNodes; i++)
-            {
-                nodes[i].Value = inputs[i];
-            }
-
-            List<Node> hiddenNodes = nodeOrder();
-
-            for(int i = 0; i < hiddenNodes.Count; i++)
-            {
-                hiddenNodes[i].commputeValue();
-            }
-
-            int j = 0;
-            for(int i = numInputNodes; i < numInputNodes + numOutputNodes; i++)
-            {
-                outputs.Add(nodes[i].commputeValue());
-                j++;
-            }
-
-            return outputs;
-        }
-        public void assembleNetwork()
-        {
-            //new plan go through all the connections to find the connections to the output node then add them to the node
-            //Console.WriteLine("assembling network");
-
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                //Console.WriteLine("index of node " + i + " " + nodes[i].toString());
-                List<Node> nodeConnections = new List<Node>();
-                List<double> nodeConnectionsWeights = new List<double>();
-
-                for (int j = 0; j < connections.Count; j++)
-                {
-                    //Console.WriteLine("index of connection " + j + " Connection " + connections[j].toString());
-                    if (connections[j].OutNode.NodeNum == nodes[i].NodeNum && connections[j].IsEnabled)
-                    {
-                        //add the innode to the node connection and the connection weight to their respective lists
-                        nodeConnections.Add(nodes[indexOfNode(connections[j].InNode)]);
-                        //Console.WriteLine(nodes[indexOfNode(connections[j].InNode)].toString());
-                        //Console.WriteLine(nodes[indexOfNode(connections[j].InNode)].toString());
-                        nodeConnectionsWeights.Add(connections[j].Weight);
-                    }
-                }
-                nodes[i].PreviousLayerNeurons = nodeConnections;
-                nodes[i].Weights = nodeConnectionsWeights;
-
-                //Console.WriteLine(nodes[i].inputsToString());
-            }
-            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
         }
 
         public int indexOfConnection(int outputNodeNumber, int inputNodeNumber)
@@ -169,85 +78,134 @@ namespace CSharpNeat
         //need to disable connections between two nodes when a middle node is added
         public int mutate(int innovNum)
         {
-            //similar weight prob of .9 means there is a 90% chance the weight will be off by a small ammount
-            //same num nodes prob of .8 means there is an 80% chance a connection will be added and 20% a nodes is added
-            double similarWeightProb = .9;
+            int newInnovNum = innovNum;
+            double mutateStructureProb = .05;
+            mutateWeights();
+
+            if(rand.NextDouble() < mutateStructureProb)
+            {
+                newInnovNum = mutateStructure(innovNum);
+            }
+            return newInnovNum;
+
+        }
+
+        public void mutateWeights()
+        {
+            double weightChangeProb = .5;
+            double weightChangeScalar = .25;
+            foreach(Connection c in connections)
+            {
+                if(weightChangeProb < rand.NextDouble())
+                {
+                    c.Weight = c.Weight + weightChangeScalar * (rand.NextDouble()*2 - 1);
+                }
+            }
+        }
+
+        public int mutateStructure(int innovNum)
+        {
             double sameNumNodesProb = .8;
 
-            //selecting nodes to connect to
-            //inputNodeNumber can be from 0 to numInputNodes and from numInputNodes + numOutputNodes to nodes.Count
-            //outputNodeNumber can be from numInputNodes to nodes.Count
-            int inputNodeNumber = 0;
-            int outputNodeNumber = 0;
-
-            double porportionInput = numInputNodes / (nodes.Count - numOutputNodes);
-            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
-
-            if (porportionInput > rand.NextDouble())
-            {
-                inputNodeNumber = rand.Next(0, numInputNodes);
-            }
-            else
-            {
-                inputNodeNumber = rand.Next(numInputNodes + numOutputNodes, nodes.Count);
-            }
-
-            outputNodeNumber = rand.Next(NumInputNodes, nodes.Count);
-
-            //connecting the nodes either with a new node or with a regular connection 
             if (rand.NextDouble() > sameNumNodesProb)
             {
                 //add new node
-                Node temp = new Node(nodes.Count, NodeType.Hidden);
-                nodes.Add(temp);
-
-                Connection temp1 = new Connection(nodes[inputNodeNumber], temp, 1, innovNum);
-                innovNum++;
-                Connection temp2 = new Connection(temp, nodes[outputNodeNumber], connections[indexOfConnection(outputNodeNumber, inputNodeNumber)].Weight, innovNum);
-                innovNum++;
-
-                
-                connections.Add(temp1);
-                connections.Add(temp2);
-                  
-                //disabling the connection
-                connections[indexOfConnection(outputNodeNumber,inputNodeNumber)].IsEnabled = false;
-
+                addNodeToNetwork(innovNum);
+                innovNum += 2;
 
             }
             else
             {
-                //add new connection 
-                //this is the same thing as updating a weigth if it happens to an existing connection
+                addConnection(innovNum);
+                innovNum++;
+            }
 
-                if(rand.NextDouble() > similarWeightProb)
+            return innovNum;
+        }
+
+        public void addNodeToNetwork(int innovNum)
+        {
+
+            Node temp = new Node(nodes.Count, NodeType.Hidden);
+            nodes.Add(temp);
+
+            Connection connectionToBeReplaced = connections[rand.Next(0, connections.Count)];
+            connectionToBeReplaced.IsEnabled = false;
+
+            Connection inputConnection = new Connection(connectionToBeReplaced.InNode, temp, 1, innovNum);
+            innovNum++;
+            Connection outputConnection = new Connection(temp, connectionToBeReplaced.OutNode, connectionToBeReplaced.Weight, innovNum);
+
+          
+        }
+
+        public void addConnection(int innovNum)
+        {
+            Connection newConnection = new Connection(getValidConnectionInput(), getValidConnectionOutput(), rand.NextDouble() * 2 - 1, innovNum);
+
+            while (isInConnections(newConnection))
+            {
+                newConnection = new Connection(getValidConnectionInput(), getValidConnectionOutput(), rand.NextDouble() * 2 - 1, innovNum);
+            }
+
+            connections.Add(newConnection);
+     
+        }
+        
+        public Boolean isInConnections(Connection c)
+        {
+            
+            foreach(Connection con in connections)
+            {
+                if (c.equals(con))
                 {
-                    Connection temp1 = new Connection(nodes[inputNodeNumber], nodes[outputNodeNumber], (0.5 - rand.NextDouble()) * 2, innovNum);
-                    connections.Add(temp1);
-                    innovNum++;
+                    return true;
                 }
-                else
-                {
-                    for (int i = 0; i < connections.Count; i++)
-                    {
-                        if (connections[i].OutNode.NodeNum == outputNodeNumber && connections[i].InNode.NodeNum == inputNodeNumber)
-                        {
-                            double newWeight = connections[i].Weight + (0.5 - rand.NextDouble()) * 2;
-                            Connection temp1 = new Connection(nodes[inputNodeNumber], nodes[outputNodeNumber], newWeight, innovNum);
-                            connections.Add(temp1);
-                            innovNum++;
-                            break;
-                        }
-
-                    }
-                    
-                }
-
-
                 
             }
-            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
+            return false;
+
+        }
+
+        public Node getValidConnectionInput()
+        {
+            
+
+            Node validNode = nodes[rand.Next(0, nodes.Count)];
+
+            while(validNode.NodeType == NodeType.Output)
+            {
+                validNode = nodes[rand.Next(0, nodes.Count)];
+            }
+
+            return validNode;
+        }
+
+        public Node getValidConnectionOutput()
+        {
+
+            Node validNode = nodes[rand.Next(0, nodes.Count)];
+
+            while (validNode.NodeType == NodeType.Sensor)
+            {
+                validNode = nodes[rand.Next(0, nodes.Count)];
+            }
+
+            return validNode;
+        }
+
+        public int addNode(int innovNum)
+        {
+
+            Connection replacedConnection = connections[rand.Next(0, connections.Count)];
+
+            Node newNode = new Node(nodes.Count,NodeType.Hidden);
+
+            Connection inputConnection = new Connection(replacedConnection.InNode, newNode, 1, innovNum);
+            Connection outputConnection = new Connection(newNode, replacedConnection.OutNode, replacedConnection.Weight, ++innovNum);
+
             return innovNum;
+
         }
 
         public Boolean isInNetwork(Node nodeNum)

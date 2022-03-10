@@ -32,6 +32,11 @@ public class MissileSpawner : MonoBehaviour
         enemyMissile.transform.position = (new Vector3(Random.Range(Terrain.transform.position.x, Terrain.transform.position.x + 1000),
                                         Terrain.transform.position.y + heightOfEnemyMissile,
                                         Terrain.transform.position.z + 999));
+
+        Targeting targetingtester = new Targeting();
+        Debug.Log("SAM Location " + missile.transform.position.ToString());
+        Debug.Log("Missile Location " + enemyMissile.transform.position.ToString());
+        Debug.Log(targetingtester.SphericalPointer(Vector3.forward, enemyMissile.transform.position - missile.transform.position).ToString());
     }
 
     IEnumerator missileWave()

@@ -19,17 +19,30 @@ namespace CSharpNeat
         public Network(Indiv indiv)
         {
             this.Indiv = indiv;
-            Nodes = new List<Node>(indiv.Nodes);
+            this.nodes = new List<Node>();
             NumberOutputNodes = indiv.NumOutputNodes;
 
+            foreach(Connection c in indiv.Connections)
+            {
+
+                if (!isNodeInNetwork(c.InNode))
+                {
+                    nodes.Add(c.InNode);
+                }
+                if (!isNodeInNetwork(c.OutNode))
+                {
+                    nodes.Add(c.OutNode);
+                }
+
+            }
             Nodes = Nodes.OrderBy(o => o.NodeNum).ToList();
 
             foreach (Connection c in indiv.Connections)
-            {
-                Nodes[c.OutNode.NodeNum].Weights = new List<double>();
-                Nodes[c.OutNode.NodeNum].PreviousLayerNeurons = new List<Node>();
-                Nodes[c.OutNode.NodeNum].Weights.Add(c.Weight);
-                Nodes[c.OutNode.NodeNum].PreviousLayerNeurons.Add(c.InNode);
+            {           
+                nodes[c.OutNode.NodeNum].Weights = new List<double>();
+                nodes[c.OutNode.NodeNum].PreviousLayerNeurons = new List<Node>();
+                nodes[c.OutNode.NodeNum].Weights.Add(c.Weight);
+                nodes[c.OutNode.NodeNum].PreviousLayerNeurons.Add(c.InNode);
             }
 
         }
@@ -37,9 +50,19 @@ namespace CSharpNeat
         public Network()
         {
             Nodes = new List<Node>();
-
         }
 
+
+        private Boolean isNodeInNetwork(Node n)
+        {
+            Boolean output = false;
+
+            foreach(Node m in nodes)
+            {
+                output = n.equals(m);
+            }
+            return output;
+        }
         private void initiliazeSensorNodes(double[] inputs)
         {
             //Console.WriteLine("initilizing the sensor nodes");

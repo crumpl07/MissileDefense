@@ -11,26 +11,83 @@ namespace CSharpNeat
         private List<Species> species;
         private List<Indiv> population;
         private Random rand = new Random();
-        private int innovationCount;
+        private List<Connection> innovationList;
+        private int targetNumberSpecies;
+        private readonly int speciesPopulationFactor = 10;
+        private readonly double populationMatingPorportion = 0.4;
+        private readonly double changeTopologyProb = 0.01;
         
         internal List<Indiv> Population { get => population; set => population = value; }
+        public int TargetNumberSpecies { get => targetNumberSpecies; set => targetNumberSpecies = value; }
 
-        public Neat()
+        public Neat(int numInputNodes, int numOutputNodes, int targetNumberSpecies)
         {
-            
-            compatThresh = 3;
-            population = new List<Indiv>();
-           
-            innovationCount = 0;
-            species = new List<Species>();
+            this.population = new List<Indiv>();
+            this.targetNumberSpecies = targetNumberSpecies;
+            this.species = new List<Species>();
+            this.innovationList = new List<Connection>();
+            initializePop(targetNumberSpecies * speciesPopulationFactor, numInputNodes, numInputNodes);
         }
-        public Neat(double compatThresh)
+        public Neat(int numInputNodes, int numOutputNodes, int targetNumberSpecies, double compatThresh)
         {
-            
             this.compatThresh = compatThresh;
-            population = new List<Indiv>();
-            innovationCount = 0;
-            species = new List<Species>();
+            this.population = new List<Indiv>();
+            this.targetNumberSpecies = targetNumberSpecies;
+            this.species = new List<Species>();
+            this.innovationList = new List<Connection>();
+            initializePop(targetNumberSpecies * speciesPopulationFactor, numInputNodes, numInputNodes);
+        }
+
+
+        public Network train(List<DataSet> data)
+        {
+            Console.WriteLine("Begining training");
+            Console.WriteLine("Training on " + data.Count + " datasets");
+
+            foreach (DataSet d in data)
+            {
+                computePopulationFitness(d);
+                Console.WriteLine("Average Population Fitness for this dataset: " + averageFitness());
+                speciateTargetSpecies();
+                Console.WriteLine("Target Species Number: " + targetNumberSpecies + " Actual Species Number: " + species.Count);
+                mate();
+                Console.WriteLine("Mated Population, population count: " + population.Count);
+                mutatePopulation();
+                Console.WriteLine("Mutated Population");
+            }
+
+            computePopulationFitness(data[0]);
+
+            return new Network(population[population.Count - 1]);
+
+
+        }
+
+        public void mutatePopulation()
+        {
+            foreach(Indiv i in population)
+            {
+                //Console.WriteLine("Mutating an Indiv");
+                i.mutateWeights();
+                if(rand.NextDouble() < changeTopologyProb)
+                {
+                    innovationList.AddRange(i.mutateStructure(innovationList.Count));
+                }
+            }
+
+
+        }
+
+        public double averageDistanceFromRandomIndiv()
+        {
+            double distanceSum = 0;
+            Indiv testIndiv = population[rand.Next(population.Count)];
+            foreach (Indiv i in population)
+            {
+                distanceSum += compareDistance(testIndiv, i);
+            }
+
+            return distanceSum / population.Count;
         }
 
         public double averageNumNodes()
@@ -92,72 +149,45 @@ namespace CSharpNeat
         //creates a pop of individuals with the given parameters
         public void initializePop(int pop, int numInputNodes, int numOutputNodes)
         {
+            population = new List<Indiv>();
             for (int i = 0; i < pop; i++)
             {
                 population.Add(new Indiv(numInputNodes, numOutputNodes));
             }
 
-            innovationCount = numInputNodes * numInputNodes;
+            innovationList = population[0].Connections;
         }
 
-        public double[] returnRow(double[,] matrix, int row)
-        {
-            double[] temp = new double[matrix.GetLength(0)]; 
-            for(int i = 0; i < matrix.GetLength(1); i++)
-            {
-                temp[i] = matrix[row, i];
-            }
-            return temp;
-        }
 
         //computes the fitness of the given population
-        public void computeFitness(double[,] inputs, double[,] expectedOutputs)
+        public void computePopulationFitness(DataSet d)
         {
             for(int i = 0; i < population.Count; i++)
             {
-
-                double totalDiff = sumDifferenceOutputs(population[i], inputs, expectedOutputs);
-                population[i].Fitness = Math.Pow(expectedOutputs.Length - totalDiff,2);
+                double totalDiff = sumDifferenceOutputs(population[i], d.Inputs, d.TargetOutputs);
+                population[i].Fitness = Math.Pow(d.TargetOutputs.Length - totalDiff,2);
                 //Console.WriteLine(population[i].Fitness);
             }
             population = population.OrderBy(o => o.Fitness).ToList();
         }
    
-        public double sumDifferenceOutputs(Indiv indiv, double[,] inputs, double[,] expectedOutputs)
+        public double sumDifferenceOutputs(Indiv indiv, double[] inputs, double[] expectedOutputs)
         {
             double totalDiff = 0.0;
-            
-            for(int i = 0; i < inputs.GetLength(0); i++)
+            Network net = new Network(indiv);
+            double[] outputs = net.computeNetwork(inputs);
+
+            for(int i = 0; i < expectedOutputs.Length; i++)
             {
-                double[] temp = returnRow(inputs, i);
-                Network net = new Network(indiv);
-                double[] outputs = net.computeNetwork(temp);
-
-                for (int j = 0; j < expectedOutputs.GetLength(1); j++)
-                {
-
-                    //This is set to zero because that is the loc of the desired output vale
-                    //Console.WriteLine("expected out: " + expectedOutputs[i, j] + " Actual out: " + outputs[j]);
-                    //Console.WriteLine("i: " + i + " j: " + j);
-                    
-                    totalDiff += Math.Abs(outputs[j] - expectedOutputs[i,j]);
-                    //Console.WriteLine("output: " + outputs[j] + " expected output: " + expectedOutputs[i, j]);
-                    //Console.WriteLine(totalDiff);
-                }
+                totalDiff += Math.Abs(outputs[i] - expectedOutputs[i]);
             }
 
             return totalDiff;
         }
 
+
         //adjusts the fitness of the population based on the equation from the paper
-        public void adjustPopFit()
-        {
-            
-            for(int i = 0; i < population.Count; i++)
-            {
-                population[i].Fitness = adjustedFitness(population[i], population, compatThresh);
-            }
-        }
+        
 
         public List<Indiv> removeList(List<Indiv> pop,List<Indiv> remove)
         {
@@ -171,19 +201,54 @@ namespace CSharpNeat
         //divides the population into species then mates
         //percentMating is the percentage of the population with the highest fitness that will pass their genes on
         //this eleminates all but the best species
-        public void speciateMate()
+
+        public void mate()
         {
+            adjustPopulationFitness();
+
+            foreach(Species s in species)
+            {
+                s.mateSpecies(populationMatingPorportion);
+            }
+            population = new List<Indiv>();
+            foreach (Species s in species)
+            {
+                population.AddRange(s.SpeciesList);
+            }
+
+
+        }
+
+        public void speciate()
+        {
+            List<Indiv> tempPopList = population.ToList();
+            while (tempPopList.Count >0)
+            {
+                Indiv example = tempPopList[rand.Next(tempPopList.Count)];
+                Species temp = new Species(example);
+                temp.SpeciesList = speciesList(example,tempPopList);
+                species.Add(temp);
+            }
+        }
+
+        //wip 
+        public void speciateTargetSpecies()
+        {
+            compatThresh = averageDistanceFromRandomIndiv() / targetNumberSpecies;
+            List<Indiv> tempPopList = population.ToList();
+            while (tempPopList.Count > 0)
+            {
+                Indiv example = tempPopList[rand.Next(tempPopList.Count)];
+                Species temp = new Species(example);
+                temp.SpeciesList = speciesList(example, tempPopList);
+                species.Add(temp);
+            }
+
+
 
         }
 
         //mutates the popluation and increments the innovation count
-        public void mutatePop()
-        {
-            foreach(Indiv i in population)
-            {
-                innovationCount = i.mutate(innovationCount);
-            }            
-        }
             
         //returns a list of all of the individauls in the same species as the given indiv
         public List<Indiv> speciesList(Indiv speciesExample, List<Indiv> population)
@@ -194,6 +259,7 @@ namespace CSharpNeat
                 if(sharingFunction(speciesExample,population[i]) == 1)
                 {                    
                     ret.Add(population[i]);
+                    population.RemoveAt(i);
                 }
             }
             return ret;
@@ -245,23 +311,22 @@ namespace CSharpNeat
 
         }
 
-        public double adjustedFitness(Indiv indiv, List<Indiv> pop, double compatThresh)
+        public void adjustPopulationFitness()
+        {
+            for(int j = 0; j < species.Count; j++)
+            {
+                for (int i = 0; i < species[j].SpeciesList.Count; i++)
+                {
+                    adjustedFitness(species[j].SpeciesList[i], species[j]);
+                }
+            }
+            
+        }
+
+        public void adjustedFitness(Indiv indiv, Species spec)
         {
             double fitnessCoeff = 1.0;
-            int numInSpecies = 0;
-
-            pop.Remove(indiv);
-
-            for(int i = 0; i < pop.Count; i++)
-            {
-                numInSpecies += sharingFunction(indiv, pop[i]);
-            }
-            //Console.WriteLine(numInSpecies);
-
-            pop.Add(indiv);
-
-            double adjustedFit = (indiv.Fitness / ((double) numInSpecies)) * fitnessCoeff;
-            return adjustedFit;
+            indiv.Fitness = (indiv.Fitness / ((double)spec.SpeciesList.Count)) * fitnessCoeff;
 
         }
 
@@ -327,82 +392,6 @@ namespace CSharpNeat
 
             return distance;
 
-        }
-
-        public Indiv crossOver(Indiv parent1, Indiv parent2)
-        {
-            int networkSize = 0;
-            Indiv child = new Indiv(parent1.NumInputNodes,parent2.NumOutputNodes);
-            List<Connection> connections = new List<Connection>();
-            List<Node> nodes = new List<Node>();
-            Indiv fitParent = parent1;
-            
-
-            if (parent1.Fitness >= parent2.Fitness)
-            {
-                networkSize = parent1.Connections.Count;
-                fitParent = parent1;
-            }
-            if (parent2.Fitness > parent1.Fitness)
-            {
-                networkSize = parent2.Connections.Count;
-                fitParent = parent2;
-            }
-            
-
-            for (int i = 0; i < networkSize; i++)
-            {
-                if (lengthOfdisjoint(parent1, parent2,i) == 0)
-                {
-                    if (rand.NextDouble() > .5)
-                    {                       
-                        connections.Add(parent1.Connections[i]);
-                    }
-                    else
-                    {
-                        connections.Add(parent2.Connections[i]);
-                    }
-                }
-                if (lengthOfdisjoint(parent1, parent2, i) > 0)
-                {
-                    int disjointEnd = lengthOfdisjoint(parent1, parent2, i) + i;
-                    //Console.WriteLine(disjointEnd);
-                    while(i < disjointEnd && i < networkSize)
-                    {
-                        connections.Add(fitParent.Connections[i]);
-                        i++;   
-                    }
-                }
-
-            }
-
-            for(int i = 0; i < connections.Count; i++)
-            {
-                if (!isInNetwork(nodes, connections[i].InNode))
-                {
-                    nodes.Add(fitParent.Nodes[fitParent.indexOfNode(connections[i].InNode)]);
-                }
-                if (!isInNetwork(nodes, connections[i].OutNode))
-                {
-                    nodes.Add(fitParent.Nodes[fitParent.indexOfNode(connections[i].OutNode)]);
-                }
-            }
-            
-
-            child.Connections = connections;
-            nodes = nodes.OrderBy(o => o.NodeNum).ToList();
-            child.Nodes = nodes;
-            return child;
-        }
-
-        public Boolean isInNetwork(List<Node> nodes, Node nodeNum)
-        {
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                if (nodes[i].NodeNum == nodeNum.NodeNum)
-                    return true;
-            }
-            return false;
         }
 
     }

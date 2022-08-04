@@ -174,61 +174,33 @@ namespace CSharpNeat
 
             //Console.WriteLine(indiv.toString());
 
-            Neat neat = new Neat();
+            Neat neat = new Neat(2,1,10);
            
-            neat.initializePop(100, 2, 1);
-            double[,] inputs = { 
-                {0,0},
-                {0,1},
-                {1,0},
-                {1,1}
-            };
-            double[,] expectedOutput = { 
-                { 0 }, 
-                { 1 }, 
-                { 1 }, 
-                { 0 } 
-            };
 
-            //neat.computeFitness(inputs, expectedOutput);
+            double[] inputline0 = { 0, 0 };
+            double[] outputline0 = { 0 };
+            DataSet dataset0 = new DataSet(inputline0, outputline0);
 
+            double[] inputline1 = { 0, 1 };
+            double[] outputline1 = { 1 };
+            DataSet dataset1 = new DataSet(inputline1, outputline1);
 
+            double[] inputline2 = { 1, 0 };
+            double[] outputline2 = { 1 };
+            DataSet dataset2 = new DataSet(inputline2, outputline2);
 
-            Indiv daBest;
-            
-            
-           
-           for(int i = 0; i < 50; i++)
-           {
-                neat.computeFitness(inputs, expectedOutput);
-                neat.adjustPopFit();
-                
-                neat.speciateMate();
-                
-                neat.mutatePop();
-                neat.computeFitness(inputs, expectedOutput);
-                neat.Population = neat.Population.OrderBy(o => o.Fitness).ToList();
-                //daBest = neat.Population[neat.Population.Count - 1];
-                //Console.WriteLine(neat.Population.Count - 1);
-                //Indiv daWorst = neat.Population[0];
-                
-                Console.WriteLine("Generation: " + i);
-                Console.WriteLine("Average Number of Nodes: " + neat.averageNumNodes());
-                Console.WriteLine("Average Number of Connections: " + neat.averageNumConnections());
-                Console.WriteLine("Average Fitness: " + neat.averageFitness());
-                Console.WriteLine();
-                //Console.WriteLine(daBest.toString());
-                //Console.WriteLine(neat.sumDifferenceOutputs(daBest, inputs, expectedOutput));
-                //Console.WriteLine(daBest.Fitness);
+            double[] inputline3 = { 1, 1 };
+            double[] outputline3 = { 0 };
+            DataSet dataset3 = new DataSet(inputline3, outputline3);
 
-                
-                Console.WriteLine();
-                //Console.WriteLine(daWorst.toString());
-                //Console.WriteLine(daWorst.Fitness);
-           }
+            List<DataSet> dataSets = new List<DataSet>();
+            dataSets.Add(dataset0);
+            dataSets.Add(dataset1);
+            dataSets.Add(dataset2);
+            dataSets.Add(dataset3);
 
-           
-          
+            Network trainedNetwork = neat.train(dataSets);
+
 
         }
     }

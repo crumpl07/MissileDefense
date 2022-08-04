@@ -105,6 +105,11 @@ namespace CSharpNeat
         {
             return previousLayerNeurons.Count == 0 && nextLayerNeurons.Count == 0;
         }
+
+        public Boolean equals(Node n)
+        {
+            return this.nodeNum == n.nodeNum;
+        }
     }
 
     public enum NodeType

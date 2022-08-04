@@ -76,19 +76,6 @@ namespace CSharpNeat
         }
 
         //need to disable connections between two nodes when a middle node is added
-        public int mutate(int innovNum)
-        {
-            int newInnovNum = innovNum;
-            double mutateStructureProb = .05;
-            mutateWeights();
-
-            if(rand.NextDouble() < mutateStructureProb)
-            {
-                newInnovNum = mutateStructure(innovNum);
-            }
-            return newInnovNum;
-
-        }
 
         public void mutateWeights()
         {
@@ -96,34 +83,54 @@ namespace CSharpNeat
             double weightChangeScalar = .25;
             foreach(Connection c in connections)
             {
-                if(weightChangeProb < rand.NextDouble())
+                if(weightChangeProb > rand.NextDouble())
                 {
                     c.Weight = c.Weight + weightChangeScalar * (rand.NextDouble()*2 - 1);
                 }
             }
         }
 
-        public int mutateStructure(int innovNum)
+        public List<Connection> mutateStructure(int innovNum)
         {
             double sameNumNodesProb = .8;
+            List<Connection> output = new List<Connection>();
 
             if (rand.NextDouble() > sameNumNodesProb)
             {
                 //add new node
-                addNodeToNetwork(innovNum);
-                innovNum += 2;
+                output.AddRange(addNodeToNetwork(innovNum));
 
             }
             else
             {
-                addConnection(innovNum);
-                innovNum++;
+                if (canAddConnection())
+                {
+                    output.Add(addConnection(innovNum));
+                }
+                
             }
 
-            return innovNum;
+            return output;
         }
 
-        public void addNodeToNetwork(int innovNum)
+        public Boolean canAddConnection()
+        {
+            Boolean output = false;
+
+            for(int i = 0; i < nodes.Count; i++)
+            {
+                for(int j = 0; j < nodes.Count; j++)
+                {
+                    if (nodes[i].NodeType != NodeType.Sensor && nodes[j].NodeType != NodeType.Output && !isInConnections(new Connection(nodes[i], nodes[j], 0, 0))){
+                        output = true;
+                    }
+                }
+            }
+
+            return output;
+        }
+
+        public List<Connection> addNodeToNetwork(int innovNum)
         {
 
             Node temp = new Node(nodes.Count, NodeType.Hidden);
@@ -136,10 +143,14 @@ namespace CSharpNeat
             innovNum++;
             Connection outputConnection = new Connection(temp, connectionToBeReplaced.OutNode, connectionToBeReplaced.Weight, innovNum);
 
-          
+            List<Connection> output = new List<Connection>();
+            output.Add(inputConnection);
+            output.Add(outputConnection);
+
+            return output;          
         }
 
-        public void addConnection(int innovNum)
+        public Connection addConnection(int innovNum)
         {
             Connection newConnection = new Connection(getValidConnectionInput(), getValidConnectionOutput(), rand.NextDouble() * 2 - 1, innovNum);
 
@@ -149,6 +160,8 @@ namespace CSharpNeat
             }
 
             connections.Add(newConnection);
+
+            return newConnection;
      
         }
         
